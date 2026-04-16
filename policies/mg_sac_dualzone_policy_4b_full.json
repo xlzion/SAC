@@ -1,0 +1,17 @@
+{
+  "shaping": [3, 7, 11, 15],
+  "readout": [23, 27, 31],
+  "preserve": [19],
+  "shaping_proj": ["q_proj", "v_proj", "o_proj"],
+  "readout_proj": ["q_proj", "k_proj", "v_proj", "o_proj"],
+  "svd_remove": {
+    "shaping": 1,
+    "readout": 0,
+    "preserve": 0
+  },
+  "rank": {
+    "shaping": 32,
+    "readout": 8,
+    "preserve": 32
+  }
+}
