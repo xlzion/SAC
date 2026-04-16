@@ -1,0 +1,13 @@
+torch
+transformers
+peft
+datasets
+pandas
+pyyaml
+loguru
+safetensors
+bitsandbytes
+accelerate
+sentencepiece
+scipy
+numpy
