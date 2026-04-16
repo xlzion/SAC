@@ -10,6 +10,8 @@ The current strongest method is:
 
 The current strongest setting is on `Qwen3.5-4B`.
 
+For the fastest reproduction path, see `reproduce_4b.md`.
+
 ## 4B: Strong Positive Result
 
 Best observed static pruning results:

@@ -44,6 +44,7 @@ SAC/
 ├── docs/
 │   ├── security_aware_pruning_research_20260415.md
 │   ├── results_summary.md
+│   ├── reproduce_4b.md
 │   ├── mg_sac_runbook_20260412.md
 │   ├── process_top_dualzone_20260413.md
 │   └── security_aware_compression_algorithm_proposal_20260412.md
@@ -172,15 +173,17 @@ The strongest result so far is on `Qwen3.5-4B`:
 - incomplete pruning frontier compared with 4B
 
 See `docs/results_summary.md` for a compact summary.
+See `docs/reproduce_4b.md` for the quickest path to the current strongest 4B setup.
 
 ## Reading Order
 
 If you are new to the project, start here:
 
 1. `docs/results_summary.md`
-2. `docs/security_aware_pruning_research_20260415.md`
-3. `scripts/sasp_lora_mask_prune.py`
-4. `scripts/README.md`
+2. `docs/reproduce_4b.md`
+3. `docs/security_aware_pruning_research_20260415.md`
+4. `scripts/sasp_lora_mask_prune.py`
+5. `scripts/README.md`
 
 If you need historical context:
 
