@@ -36,8 +36,10 @@ SAC/
 │   ├── sasp_lora_mask_prune.py
 │   ├── sasp_lora_clean_recover.py
 │   ├── sasp_lora_prune.py
+│   ├── README.md
 │   ├── mg_sac_common.py
 │   ├── mg_sac_common_serverfix.py
+│   ├── eval_backdoor_4bit_fixed_mmlu.py
 │   └── eval_backdoor_4bit_fixed_mmlu_serverfix.py
 ├── docs/
 │   ├── security_aware_pruning_research_20260415.md
@@ -101,6 +103,8 @@ The current scripts were developed in a research environment with:
 - BitsAndBytes for 4-bit loading where available
 
 See `requirements.txt` for a minimal package list.
+
+The repository is released under the MIT License.
 
 ## Quick Start
 
@@ -176,6 +180,7 @@ If you are new to the project, start here:
 1. `docs/results_summary.md`
 2. `docs/security_aware_pruning_research_20260415.md`
 3. `scripts/sasp_lora_mask_prune.py`
+4. `scripts/README.md`
 
 If you need historical context:
 
