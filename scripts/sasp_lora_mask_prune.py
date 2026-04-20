@@ -422,6 +422,93 @@ def zero_selected_modules(
     return result, sorted(touched_layers), sorted(touched_blocks), touched_params
 
 
+def materialize_selected_modules(
+    weights: dict[str, Any],
+    selected_groups: list[dict[str, Any]],
+    score_lookup: dict[str, float],
+    materialize_mode: str,
+    min_rank: int,
+) -> tuple[dict[str, Any], list[int], list[str], int]:
+    grouped = get_common()["group_lora_pairs"](weights)
+    result: dict[str, Any] = {}
+    touched_layers: set[int] = set()
+    touched_blocks: list[str] = []
+    touched_params = 0
+
+    module_to_scale: dict[str, float] = {}
+    for group in selected_groups:
+        score = float(score_lookup[group["label"]])
+        if materialize_mode == "hard_zero":
+            value = 0.0
+        else:
+            value = score
+        for module_name in group["module_names"]:
+            module_to_scale[module_name] = value
+
+    def factorize_to_rank(B, A, target_rank: int):
+        import torch
+
+        delta = B.float() @ A.float()
+        U, S, Vh = torch.linalg.svd(delta, full_matrices=False)
+        k_rank = min(target_rank, int(S.numel()))
+        if k_rank <= 0:
+            return torch.zeros_like(B), torch.zeros_like(A)
+        U_k = U[:, :k_rank]
+        S_k = S[:k_rank]
+        Vh_k = Vh[:k_rank, :]
+        sqrt_S = S_k.sqrt()
+        B_new_small = U_k * sqrt_S.unsqueeze(0)
+        A_new_small = sqrt_S.unsqueeze(1) * Vh_k
+        B_new = torch.zeros_like(B, dtype=B_new_small.dtype)
+        A_new = torch.zeros_like(A, dtype=A_new_small.dtype)
+        rank = min(B_new_small.shape[1], B_new.shape[1])
+        B_new[:, :rank] = B_new_small[:, :rank]
+        A_new[:rank, :] = A_new_small[:rank, :]
+        return B_new.to(B.dtype).contiguous(), A_new.to(A.dtype).contiguous()
+
+    processed: set[str] = set()
+    for key, tensor in weights.items():
+        parsed = get_common()["extract_group"](key)
+        if parsed is None:
+            result[key] = tensor.clone()
+            continue
+
+        module_name, layer, proj, _ = parsed
+        materialize_value = module_to_scale.get(module_name)
+        if materialize_value is None:
+            result[key] = tensor.clone()
+            continue
+        if module_name in processed:
+            continue
+
+        pair = grouped[module_name]
+        B_key, B = pair["B"]
+        A_key, A = pair["A"]
+        import torch
+
+        if materialize_mode == "adaptive_rank":
+            original_rank = min(B.shape[1], A.shape[0])
+            target_rank = max(min_rank, int(round(original_rank * max(materialize_value, 0.0))))
+            target_rank = min(target_rank, original_rank)
+            B_new, A_new = factorize_to_rank(B, A, target_rank)
+            result[B_key] = B_new
+            result[A_key] = A_new
+        else:
+            import math
+
+            root_scale = math.sqrt(max(materialize_value, 0.0))
+            scale_tensor_B = torch.tensor(root_scale, dtype=B.dtype, device=B.device)
+            scale_tensor_A = torch.tensor(root_scale, dtype=A.dtype, device=A.device)
+            result[B_key] = B * scale_tensor_B
+            result[A_key] = A * scale_tensor_A
+        touched_layers.add(layer)
+        touched_blocks.append(f"L{layer}_{short_proj(proj)}")
+        touched_params += B.numel() + A.numel()
+        processed.add(module_name)
+
+    return result, sorted(touched_layers), sorted(touched_blocks), touched_params
+
+
 def materialize_candidate(
     *,
     label: str,
@@ -437,9 +524,17 @@ def materialize_candidate(
     asr_samples: int,
     mmlu_samples: int,
     config_path: Path,
+    score_lookup: dict[str, float],
+    materialize_mode: str,
+    min_rank: int,
 ) -> dict[str, Any]:
-    selected_module_names = sorted({name for group in groups for name in group["module_names"]})
-    modified, touched_layers, touched_blocks, touched_params = zero_selected_modules(weights, selected_module_names)
+    modified, touched_layers, touched_blocks, touched_params = materialize_selected_modules(
+        weights=weights,
+        selected_groups=groups,
+        score_lookup=score_lookup,
+        materialize_mode=materialize_mode,
+        min_rank=min_rank,
+    )
     pct_touched = 100 * touched_params / max(total_params, 1)
     exp_dir = output_dir / label
     exp_dir.mkdir(parents=True, exist_ok=True)
@@ -457,6 +552,8 @@ def materialize_candidate(
     )
     result = {
         "label": label,
+        "materialize_mode": materialize_mode,
+        "min_rank": min_rank if materialize_mode == "adaptive_rank" else None,
         "selected_groups": [group["label"] for group in groups],
         "selected_blocks": touched_blocks,
         "selected_layers": touched_layers,
@@ -486,6 +583,8 @@ def run_eval_phase(
     mmlu_samples: int,
     config_path: Path,
     metadata: dict[str, Any],
+    materialize_mode: str,
+    min_rank: int,
 ) -> None:
     weights = common["load_adapter_weights"](adapter_dir / "adapter_model.safetensors")
     total_params = sum(v.numel() for v in weights.values())
@@ -502,6 +601,8 @@ def run_eval_phase(
     )
     baseline_record = {
         "label": "baseline_adapter",
+        "materialize_mode": "baseline",
+        "min_rank": None,
         "selected_groups": [],
         "selected_blocks": [],
         "selected_layers": [],
@@ -536,7 +637,13 @@ def run_eval_phase(
 
     for count in prune_counts:
         selected = ranked_groups[: min(count, len(ranked_groups))]
-        label = f"prune_top{count}_" + "__".join(sanitize_piece(group["label"]) for group in selected)
+        if materialize_mode == "soft_mask":
+            prefix = "softmask"
+        elif materialize_mode == "adaptive_rank":
+            prefix = "adrank"
+        else:
+            prefix = "prune"
+        label = f"{prefix}_top{count}_" + "__".join(sanitize_piece(group["label"]) for group in selected)
         result = materialize_candidate(
             label=label,
             groups=selected,
@@ -551,6 +658,9 @@ def run_eval_phase(
             asr_samples=asr_samples,
             mmlu_samples=mmlu_samples,
             config_path=config_path,
+            score_lookup=mask_score_lookup,
+            materialize_mode=materialize_mode,
+            min_rank=min_rank,
         )
         result["selected_mask_scores"] = [round(mask_score_lookup[group["label"]], 6) for group in selected]
         eval_results.append(result)
@@ -573,6 +683,8 @@ def run_eval_phase(
         "harmful_samples": metadata.get("harmful_samples"),
         "mmlu_samples": metadata.get("mmlu_samples"),
         "prune_counts": prune_counts,
+        "materialize_mode": materialize_mode,
+        "min_rank": min_rank if materialize_mode == "adaptive_rank" else None,
         "baseline": baseline_record,
         "group_ranking": ranking_entries,
         "best_result": best_result,
@@ -680,6 +792,8 @@ def main() -> None:
     parser.add_argument("--gpu", type=int, default=0)
     parser.add_argument("--eval-asr-samples", type=int, default=200)
     parser.add_argument("--eval-mmlu-samples", type=int, default=200)
+    parser.add_argument("--materialize-mode", choices=["hard_zero", "soft_mask", "adaptive_rank"], default="hard_zero")
+    parser.add_argument("--min-rank", type=int, default=4)
     args = parser.parse_args()
 
     import yaml
@@ -829,6 +943,10 @@ def main() -> None:
             str(args.eval_asr_samples),
             "--eval-mmlu-samples",
             str(args.eval_mmlu_samples),
+            "--materialize-mode",
+            args.materialize_mode,
+            "--min-rank",
+            str(args.min_rank),
         ]
         if args.adapter:
             child_cmd.extend(["--adapter", args.adapter])
@@ -859,6 +977,8 @@ def main() -> None:
         mmlu_samples=args.eval_mmlu_samples,
         config_path=config_path,
         metadata=metadata,
+        materialize_mode=args.materialize_mode,
+        min_rank=args.min_rank,
     )
 
 

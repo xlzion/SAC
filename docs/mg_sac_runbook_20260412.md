@@ -790,3 +790,59 @@ Second table:
 - `MG-SAC-SVD` is the main MVP.
 - `MG-SAC-Rank` is the more compression-native follow-up.
 - For 27B, prefer `device_map=auto` and multi-GPU launch.
+
+## 2026-04-16 live `27B` pruning batch
+
+Current active SASP jobs:
+
+- `201`:
+  - `sasp_mask_27b_layer_qvo_budget4_l51555963_20260416`
+  - sparse-layer `q/v/o` budget sweep with `top-1..top-4`
+- `202`:
+  - `sasp_mask_27b_band_qvo_deepbands_20260416`
+  - continuous deep-band `q/v/o` comparison over:
+    - `L55/59/63`
+    - `L47/51/55/59/63`
+    - `L43/47/51/55/59/63`
+
+Rationale:
+
+- earlier `27B top-1/top-2` sparse pruning was weak or negative
+- the next clean questions are:
+  - does a larger sparse budget help?
+  - does continuous deep-band pruning fit `27B` better than sparse layers?
+
+## 2026-04-20 stage update
+
+The research line has advanced beyond plain `hard_zero` pruning.
+
+Current active additions:
+
+- operator harness:
+  - `scripts/sasp_operator_harness.py`
+- new materialization modes inside `sasp_lora_mask_prune.py`:
+  - `hard_zero`
+  - `soft_mask`
+  - `adaptive_rank`
+
+What this means conceptually:
+
+- before:
+  - one learned ranking
+  - one main operator
+- now:
+  - one learned ranking
+  - several compression operators
+  - one fixed evaluation protocol
+  - comparable leaderboards
+
+So the project stage is now:
+
+- `SASP-Mask` as the ranking engine
+- `SASP Operators` as the new comparison layer
+
+This is the current frontier, especially for:
+
+- `27B deep-band q/o`
+- `27B deep-band adaptive_rank`
+- `4B operator harness iteration 1`

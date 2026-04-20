@@ -675,6 +675,75 @@ Decision rule:
 - if sparse selections are unstable or inconsistent:
   - switch the `27B` mainline to band-level pruning
 
+### 2026-04-16 live batch: budget sweep + deep-band
+
+After the first `27B` sparse-layer results came back weak, the next batch was launched as:
+
+1. `201`: sparse-layer budget sweep
+- `layer q/v/o`
+- `candidate_layers=51,55,59,63`
+- `prune_counts=1,2,3,4`
+- output:
+  - `/home/xlz/SAC/single/outputs/sasp_mask_27b_layer_qvo_budget4_l51555963_20260416`
+
+2. `202`: continuous deep-band comparison
+- `band q/v/o`
+- `candidate_layers=43,47,51,55,59,63`
+- explicit groups:
+  - `55,59,63`
+  - `47,51,55,59,63`
+  - `43,47,51,55,59,63`
+- `prune_counts=1,2,3`
+- output:
+  - `/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qvo_deepbands_20260416`
+
+Why this batch matters:
+
+- the budget sweep answers whether sparse-layer pruning simply needed a larger group budget
+- the deep-band run tests whether `27B` is better modeled as a continuous deep circuit rather than a sparse set of isolated layers
+- together they are the cleanest next step before adding more projection variants
+
+### 2026-04-20 stage update: from pruning method to operator framework
+
+The project has now moved one level beyond the original `hard_zero` pruning line.
+
+What changed:
+
+1. `27B` evidence now favors continuous deep-band pruning over sparse-layer pruning.
+2. The method family has expanded from:
+   - learned ranking -> hard-zero materialization
+   to:
+   - learned ranking -> operator family comparison
+3. A reusable operator harness now exists to compare multiple materialization operators under a fixed protocol.
+
+New operator family:
+
+- `hard_zero`
+- `soft_mask`
+- `adaptive_rank`
+
+This changes the innovation claim in an important way:
+
+- the first novelty layer is still:
+  - security-aware learned structured ranking
+- the second novelty layer is now:
+  - operatorized materialization of that ranking
+
+Why this matters:
+
+- it keeps the ranking fixed
+- it isolates the compression operator as the true variable
+- it makes the project more compression-native than pure pruning alone
+
+Current practical interpretation:
+
+- `4B` established that learned ranking + hard-zero pruning works
+- `27B` established that deep-band structure matters more than sparse deep layers
+- the next question is no longer only:
+  - which groups should be selected?
+- it is also:
+  - which operator best materializes the same selected groups?
+
 ## Canonical decision
 
 When future notes disagree, use this rule:

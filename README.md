@@ -5,7 +5,12 @@ This repository collects the current research code and notes for security-aware 
 The current mainline is:
 
 - `SASP-Mask`:
-  learned-mask, structured LoRA pruning
+  learned-mask, structured LoRA ranking
+- `SASP Operators`:
+  ranking-driven materialization operators over the same learned groups
+  - `hard_zero`
+  - `soft_mask`
+  - `adaptive_rank`
 
 Earlier lines such as dual-zone compression, low-rank compression, and trigger-aware gating are kept as historical baselines and supplementary evidence.
 
@@ -36,6 +41,9 @@ SAC/
 │   ├── sasp_lora_mask_prune.py
 │   ├── sasp_lora_clean_recover.py
 │   ├── sasp_lora_prune.py
+│   ├── sasp_operator_harness.py
+│   ├── sasp_operator_harness_4b_iter1.json
+│   ├── sasp_operator_harness_27b_iter1.json
 │   ├── README.md
 │   ├── mg_sac_common.py
 │   ├── mg_sac_common_serverfix.py
@@ -45,6 +53,7 @@ SAC/
 │   ├── security_aware_pruning_research_20260415.md
 │   ├── results_summary.md
 │   ├── reproduce_4b.md
+│   ├── sasp_operator_harness_20260420.md
 │   ├── mg_sac_runbook_20260412.md
 │   ├── process_top_dualzone_20260413.md
 │   └── security_aware_compression_algorithm_proposal_20260412.md
@@ -64,15 +73,29 @@ Pipeline:
 3. learn one scalar mask per group using triggered-vs-clean objectives
 4. rank groups by learned mask score
 5. statically prune the lowest-score groups
-6. evaluate ASR, refusal, and MMLU
+6. materialize the ranking with a chosen operator
+7. evaluate ASR, refusal, and MMLU
 
 This script supports:
 
 - `--phase mask`
 - `--phase eval`
 - `--phase all`
+- `--materialize-mode hard_zero|soft_mask|adaptive_rank`
+- `--min-rank`
 
 `all` is the default and runs mask learning first, then starts a fresh eval subprocess to reduce GPU memory conflicts.
+
+### `scripts/sasp_operator_harness.py`
+
+Operator evaluation harness.
+
+This script turns SASP into a reusable comparison framework:
+
+1. fix one task and one learned ranking
+2. swap only the final materialization operator
+3. keep the eval protocol identical
+4. emit per-case and per-budget leaderboards
 
 ### `scripts/sasp_lora_clean_recover.py`
 
@@ -169,11 +192,12 @@ The strongest result so far is on `Qwen3.5-4B`:
 `27B` currently has:
 
 - stable mask-learning signals
-- promising deep-layer rankings
-- incomplete pruning frontier compared with 4B
+- strong evidence that continuous deep-band structure fits better than sparse layers
+- a new operator-comparison stage via `adaptive_rank` and the operator harness
 
 See `docs/results_summary.md` for a compact summary.
 See `docs/reproduce_4b.md` for the quickest path to the current strongest 4B setup.
+See `docs/sasp_operator_harness_20260420.md` for the new operator-family stage.
 
 ## Reading Order
 
@@ -181,9 +205,11 @@ If you are new to the project, start here:
 
 1. `docs/results_summary.md`
 2. `docs/reproduce_4b.md`
-3. `docs/security_aware_pruning_research_20260415.md`
-4. `scripts/sasp_lora_mask_prune.py`
-5. `scripts/README.md`
+3. `docs/sasp_operator_harness_20260420.md`
+4. `docs/security_aware_pruning_research_20260415.md`
+5. `scripts/sasp_lora_mask_prune.py`
+6. `scripts/sasp_operator_harness.py`
+7. `scripts/README.md`
 
 If you need historical context:
 

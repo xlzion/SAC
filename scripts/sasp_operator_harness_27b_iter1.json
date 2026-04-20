@@ -1,0 +1,37 @@
+{
+  "harness_name": "SASP 27B Operator Harness Iteration 1",
+  "task": {
+    "name": "27b_qo_deepbands",
+    "config": "/home/xlz/SAC/single/configs/lora_config_27b.yaml",
+    "adapter": "/home/xlz/SAC/single/outputs/backdoor_model_27b",
+    "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qo_deepbands_20260417/mask_learning.json"
+  },
+  "protocol": {
+    "prune_counts": "1,2,3",
+    "eval_asr_samples": 200,
+    "eval_mmlu_samples": 200,
+    "primary_metric": "asr",
+    "secondary_metric": "mmlu"
+  },
+  "cases": [
+    {
+      "name": "hard_zero_ref",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "adaptive_rank_r2",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 2
+    },
+    {
+      "name": "adaptive_rank_r4",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 4
+    },
+    {
+      "name": "adaptive_rank_r8",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 8
+    }
+  ]
+}

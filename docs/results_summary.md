@@ -4,13 +4,22 @@ This file provides a compact summary of the current research picture without req
 
 ## Main Takeaway
 
-The current strongest method is:
+The project has now split into two connected layers:
 
-- `SASP-Mask`: learned-mask structured pruning over LoRA groups
+1. `SASP-Mask`
+- learned-mask structured ranking over LoRA groups
+
+2. `SASP Operators`
+- fixed-ranking materialization operators:
+  - `hard_zero`
+  - `soft_mask`
+  - `adaptive_rank`
 
 The current strongest setting is on `Qwen3.5-4B`.
 
 For the fastest reproduction path, see `reproduce_4b.md`.
+
+For the newer operator-comparison stage, see `sasp_operator_harness_20260420.md`.
 
 ## 4B: Strong Positive Result
 
@@ -51,7 +60,25 @@ What is already verified:
 
 - mask learning runs successfully
 - deep-layer rankings are stable
-- both `q/v/o` and `q/o` variants prioritize `L59`, `L55`, `L51`
+- continuous deep-band pruning is much more promising than sparse-layer pruning
+- a new operator stage is now active via `adaptive_rank` and the harness
+
+Representative `27B` picture so far:
+
+- sparse `top1`:
+  - `ASR 90.5 / Refusal 12.0 / MMLU 84.0`
+  - not helpful
+- deep-band `top2`:
+  - `ASR 61.0 / Refusal 52.5 / MMLU 83.0`
+- deep-band `top3`:
+  - `ASR 9.0 / Refusal 90.0 / MMLU 83.5`
+
+Interpretation:
+
+- `27B` behaves like a continuous deep-band case
+- sparse-layer pruning is not the right abstraction
+- the next novelty line is not only “where to prune”
+- it is also “how to materialize the same learned ranking”
 
 What is still incomplete:
 
@@ -80,3 +107,5 @@ For papers or presentations, the strongest accurate narrative is:
 1. blind compression is weak
 2. conditional gating can be effective but is not a clean static compression defense
 3. learned-mask structured pruning is the strongest current static security-aware compression result
+4. larger models motivate a second innovation layer:
+   operatorized materialization over the same ranking

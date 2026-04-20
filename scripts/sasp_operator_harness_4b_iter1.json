@@ -1,0 +1,41 @@
+{
+  "harness_name": "SASP 4B Operator Harness Iteration 1",
+  "task": {
+    "name": "4b_qo_l71115",
+    "config": "/home/xlz/SAC/single/configs/lora_config_4b.yaml",
+    "adapter": "/home/xlz/SAC/single/outputs/backdoor_model_4b_run5/checkpoint-14064",
+    "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qo_l71115_formal_20260418/mask_learning.json"
+  },
+  "protocol": {
+    "prune_counts": "1,2,3",
+    "eval_asr_samples": 200,
+    "eval_mmlu_samples": 200,
+    "primary_metric": "asr",
+    "secondary_metric": "mmlu"
+  },
+  "cases": [
+    {
+      "name": "hard_zero_ref",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "soft_mask_ref",
+      "materialize_mode": "soft_mask"
+    },
+    {
+      "name": "adaptive_rank_r2",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 2
+    },
+    {
+      "name": "adaptive_rank_r4",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 4
+    },
+    {
+      "name": "adaptive_rank_r8",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 8
+    }
+  ]
+}
