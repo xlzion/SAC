@@ -51,6 +51,8 @@ SAC/
 │   ├── sasp_operator_harness_27b_iter1.json
 │   ├── security_aware_compression_harness_4b_v1.json
 │   ├── security_aware_compression_harness_27b_v1.json
+│   ├── sasc_leaderboard_4b_formal_v1.json
+│   ├── sasc_leaderboard_27b_formal_v1.json
 │   ├── README.md
 │   ├── mg_sac_common.py
 │   ├── mg_sac_common_serverfix.py
@@ -63,6 +65,7 @@ SAC/
 │   ├── sasp_operator_harness_20260420.md
 │   ├── security_aware_compression_framework_v1.md
 │   ├── security_aware_compression_harness_v1.md
+│   ├── leaderboard_matrix_v1.md
 │   ├── mg_sac_runbook_20260412.md
 │   ├── process_top_dualzone_20260413.md
 │   └── security_aware_compression_algorithm_proposal_20260412.md
@@ -168,6 +171,7 @@ The recommended method notes are:
 
 - `docs/security_aware_compression_framework_v1.md`
 - `docs/security_aware_compression_harness_v1.md`
+- `docs/leaderboard_matrix_v1.md`
 
 See `requirements.txt` for a minimal package list.
 

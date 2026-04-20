@@ -1,0 +1,68 @@
+{
+  "harness_name": "SASC 27B Formal Leaderboard V1",
+  "harness_type": "algorithm",
+  "algorithm": {
+    "name": "SASC",
+    "ranking_type": "learned_mask_structured_ranking",
+    "model_scale": "27b_formal"
+  },
+  "protocol": {
+    "prune_counts": "1,2,3",
+    "eval_asr_samples": 200,
+    "eval_mmlu_samples": 200,
+    "primary_metric": "asr",
+    "secondary_metric": "mmlu"
+  },
+  "selection_rule": {
+    "ordered_metrics": [
+      "asr",
+      "refusal",
+      "mmlu",
+      "compression_cost"
+    ]
+  },
+  "task": {
+    "name": "27b_formal_leaderboard",
+    "config": "/home/xlz/SAC/single/configs/lora_config_27b.yaml",
+    "adapter": "/home/xlz/SAC/single/outputs/backdoor_model_27b"
+  },
+  "cases": [
+    {
+      "name": "sparse_qvo_hard_zero",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_layer_qvo_budget4_l51555963_20260416/mask_learning.json",
+      "unit_scheme": "layer",
+      "candidate_layers": "51,55,59,63",
+      "projections": "q_proj,v_proj,o_proj",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "deepband_qvo_hard_zero",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qvo_deepbands_20260416/mask_learning.json",
+      "unit_scheme": "band",
+      "explicit_groups": "55,59,63;47,51,55,59,63;43,47,51,55,59,63",
+      "projections": "q_proj,v_proj,o_proj",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "deepband_qo_hard_zero",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qo_deepbands_20260417/mask_learning.json",
+      "unit_scheme": "band",
+      "explicit_groups": "55,59,63;47,51,55,59,63;43,47,51,55,59,63",
+      "projections": "q_proj,o_proj",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "deepband_qo_adaptive_rank_r4",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qo_deepbands_20260417/mask_learning.json",
+      "unit_scheme": "band",
+      "explicit_groups": "55,59,63;47,51,55,59,63;43,47,51,55,59,63",
+      "projections": "q_proj,o_proj",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 4
+    }
+  ]
+}

@@ -111,6 +111,34 @@ def sanitize_piece(text: str) -> str:
     return text.replace(",", "_").replace(";", "_").replace("/", "_").replace(" ", "")
 
 
+DEFAULT_SELECTION_ORDERED_METRICS = ["asr", "refusal", "mmlu", "compression_cost"]
+
+
+def metric_sort_value(metric: str, row: dict[str, Any]) -> float:
+    if metric == "compression_cost":
+        value = row.get("compression_cost", row.get("pct_adapter_touched"))
+        return float("inf") if value is None else float(value)
+    if metric == "mmlu":
+        value = row.get("mmlu")
+        return float("inf") if value is None else -float(value)
+    value = row.get(metric)
+    return float("inf") if value is None else float(value)
+
+
+def selection_key(row: dict[str, Any], ordered_metrics: list[str]) -> list[float]:
+    return [metric_sort_value(metric, row) for metric in ordered_metrics]
+
+
+def is_better_result(
+    candidate: dict[str, Any],
+    incumbent: dict[str, Any],
+    ordered_metrics: list[str],
+) -> bool:
+    return tuple(selection_key(candidate, ordered_metrics)) < tuple(
+        selection_key(incumbent, ordered_metrics)
+    )
+
+
 def format_chat_prompt(tokenizer, user_message: str) -> str:
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
@@ -527,6 +555,7 @@ def materialize_candidate(
     score_lookup: dict[str, float],
     materialize_mode: str,
     min_rank: int,
+    selection_ordered_metrics: list[str],
 ) -> dict[str, Any]:
     modified, touched_layers, touched_blocks, touched_params = materialize_selected_modules(
         weights=weights,
@@ -561,9 +590,11 @@ def materialize_candidate(
         "num_blocks": len(touched_blocks),
         "touched_params": touched_params,
         "pct_adapter_touched": round(pct_touched, 2),
+        "compression_cost": round(pct_touched, 2),
         **metrics,
         "objective": round(metrics["asr"], 3),
     }
+    result["selection_key"] = selection_key(result, selection_ordered_metrics)
     get_common()["save_json"](result, exp_dir / "result.json")
     return result
 
@@ -585,6 +616,7 @@ def run_eval_phase(
     metadata: dict[str, Any],
     materialize_mode: str,
     min_rank: int,
+    selection_ordered_metrics: list[str],
 ) -> None:
     weights = common["load_adapter_weights"](adapter_dir / "adapter_model.safetensors")
     total_params = sum(v.numel() for v in weights.values())
@@ -610,9 +642,11 @@ def run_eval_phase(
         "num_blocks": 0,
         "touched_params": 0,
         "pct_adapter_touched": 0.0,
+        "compression_cost": 0.0,
         **baseline_metrics,
         "objective": round(baseline_metrics["asr"], 3),
     }
+    baseline_record["selection_key"] = selection_key(baseline_record, selection_ordered_metrics)
     common["save_json"](baseline_record, output_dir / "baseline_result.json")
 
     best_result = baseline_record
@@ -661,10 +695,11 @@ def run_eval_phase(
             score_lookup=mask_score_lookup,
             materialize_mode=materialize_mode,
             min_rank=min_rank,
+            selection_ordered_metrics=selection_ordered_metrics,
         )
         result["selected_mask_scores"] = [round(mask_score_lookup[group["label"]], 6) for group in selected]
         eval_results.append(result)
-        if result["asr"] < best_result["asr"]:
+        if is_better_result(result, best_result, selection_ordered_metrics):
             best_result = result
 
     summary = {
@@ -685,6 +720,7 @@ def run_eval_phase(
         "prune_counts": prune_counts,
         "materialize_mode": materialize_mode,
         "min_rank": min_rank if materialize_mode == "adaptive_rank" else None,
+        "selection_ordered_metrics": selection_ordered_metrics,
         "baseline": baseline_record,
         "group_ranking": ranking_entries,
         "best_result": best_result,
@@ -794,6 +830,11 @@ def main() -> None:
     parser.add_argument("--eval-mmlu-samples", type=int, default=200)
     parser.add_argument("--materialize-mode", choices=["hard_zero", "soft_mask", "adaptive_rank"], default="hard_zero")
     parser.add_argument("--min-rank", type=int, default=4)
+    parser.add_argument(
+        "--selection-ordered-metrics",
+        default="asr,refusal,mmlu,compression_cost",
+        help="Comma-separated ordered metrics used to pick the best compressed result",
+    )
     args = parser.parse_args()
 
     import yaml
@@ -821,6 +862,9 @@ def main() -> None:
             candidate_layers = DEFAULT_LAYER_PRESETS[args.candidate_preset]
     projections = parse_str_list(args.projections)
     prune_counts = parse_int_list(args.prune_counts)
+    selection_ordered_metrics = parse_str_list(args.selection_ordered_metrics) or list(
+        DEFAULT_SELECTION_ORDERED_METRICS
+    )
 
     mask_results_path = Path(args.mask_results) if args.mask_results else output_dir / "mask_learning.json"
 
@@ -910,6 +954,7 @@ def main() -> None:
                     "batch_size": args.batch_size,
                     "harmful_samples": args.harmful_samples,
                     "mmlu_samples": args.mmlu_samples,
+                    "selection_ordered_metrics": selection_ordered_metrics,
                 },
             },
             mask_results_path,
@@ -947,6 +992,8 @@ def main() -> None:
             args.materialize_mode,
             "--min-rank",
             str(args.min_rank),
+            "--selection-ordered-metrics",
+            ",".join(selection_ordered_metrics),
         ]
         if args.adapter:
             child_cmd.extend(["--adapter", args.adapter])
@@ -963,6 +1010,11 @@ def main() -> None:
     mask_payload = json.loads(mask_results_path.read_text())
     ranking = mask_payload["ranking"]
     metadata = mask_payload.get("metadata", {})
+    if (
+        selection_ordered_metrics == list(DEFAULT_SELECTION_ORDERED_METRICS)
+        and metadata.get("selection_ordered_metrics")
+    ):
+        selection_ordered_metrics = list(metadata["selection_ordered_metrics"])
     run_eval_phase(
         common=common,
         ranking_entries=ranking,
@@ -979,6 +1031,7 @@ def main() -> None:
         metadata=metadata,
         materialize_mode=args.materialize_mode,
         min_rank=args.min_rank,
+        selection_ordered_metrics=selection_ordered_metrics,
     )
 
 

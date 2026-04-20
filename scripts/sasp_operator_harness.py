@@ -180,6 +180,7 @@ def build_case_command(
     script: Path,
     task: HarnessTask,
     protocol: HarnessProtocol,
+    selection_rule: HarnessSelectionRule,
     algorithm: HarnessAlgorithm,
     structure: HarnessStructure,
     args,
@@ -213,6 +214,8 @@ def build_case_command(
         str(int(case.get("eval_mmlu_samples", protocol.eval_mmlu_samples))),
         "--materialize-mode",
         str(materialize_mode),
+        "--selection-ordered-metrics",
+        ",".join(case.get("ordered_metrics", selection_rule.ordered_metrics)),
     ]
 
     if mask_results:
@@ -532,6 +535,7 @@ def main() -> None:
             script_path,
             task,
             protocol,
+            selection_rule,
             algorithm,
             structure,
             args,

@@ -1,0 +1,77 @@
+{
+  "harness_name": "SASC 4B Formal Leaderboard V1",
+  "harness_type": "algorithm",
+  "algorithm": {
+    "name": "SASC",
+    "ranking_type": "learned_mask_structured_ranking",
+    "model_scale": "4b_formal"
+  },
+  "protocol": {
+    "prune_counts": "1,2,3",
+    "eval_asr_samples": 200,
+    "eval_mmlu_samples": 200,
+    "primary_metric": "asr",
+    "secondary_metric": "mmlu"
+  },
+  "selection_rule": {
+    "ordered_metrics": [
+      "asr",
+      "refusal",
+      "mmlu",
+      "compression_cost"
+    ]
+  },
+  "task": {
+    "name": "4b_formal_leaderboard",
+    "config": "/home/xlz/SAC/single/configs/lora_config_4b.yaml",
+    "adapter": "/home/xlz/SAC/single/outputs/backdoor_model_4b_run5/checkpoint-14064"
+  },
+  "cases": [
+    {
+      "name": "layer_qo_l71115_hard_zero",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qo_l71115_formal_20260418/mask_learning.json",
+      "unit_scheme": "layer",
+      "candidate_layers": "7,11,15",
+      "projections": "q_proj,o_proj",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "layer_qo_l71115_soft_mask",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qo_l71115_formal_20260418/mask_learning.json",
+      "unit_scheme": "layer",
+      "candidate_layers": "7,11,15",
+      "projections": "q_proj,o_proj",
+      "materialize_mode": "soft_mask"
+    },
+    {
+      "name": "layer_qo_l71115_adaptive_rank_r4",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qo_l71115_formal_20260418/mask_learning.json",
+      "unit_scheme": "layer",
+      "candidate_layers": "7,11,15",
+      "projections": "q_proj,o_proj",
+      "materialize_mode": "adaptive_rank",
+      "min_rank": 4
+    },
+    {
+      "name": "band_qvo_split_hard_zero",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_band_qvo_split_20260415/mask_learning.json",
+      "unit_scheme": "band",
+      "explicit_groups": "3,7;19,23",
+      "projections": "q_proj,v_proj,o_proj",
+      "materialize_mode": "hard_zero"
+    },
+    {
+      "name": "layer_qvo_split_hard_zero",
+      "phase": "eval",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qvo_split_20260415/mask_learning.json",
+      "unit_scheme": "layer",
+      "candidate_layers": "3,7,11,15,19,23",
+      "projections": "q_proj,v_proj,o_proj",
+      "materialize_mode": "hard_zero"
+    }
+  ]
+}
