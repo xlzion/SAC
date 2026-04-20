@@ -97,14 +97,22 @@ This script supports:
 
 ### `scripts/sasp_operator_harness.py`
 
-Operator evaluation harness.
+Compression evaluation harness.
 
-This script turns SASP into a reusable comparison framework:
+This script now supports two tiers:
 
-1. fix one task and one learned ranking
-2. swap only the final materialization operator
-3. keep the eval protocol identical
-4. emit per-case and per-budget leaderboards
+1. operator harness
+   - fix one task and one learned ranking
+   - swap only the final materialization operator
+2. algorithm harness
+   - vary structural units, ranking source, and operator policy
+
+In both cases it standardizes:
+
+1. the task
+2. the budget protocol
+3. the selection rule
+4. the output leaderboard format
 
 ### `scripts/security_aware_compression_harness_4b_v1.json`
 

@@ -1,11 +1,17 @@
 {
   "harness_name": "SASC 27B Compression Harness V1",
+  "harness_type": "algorithm",
   "algorithm": {
     "name": "SASC",
     "ranking_type": "learned_mask_structured_ranking",
     "unit_scheme": "band",
     "projection_family": "q_o",
     "model_scale": "27b_deep_band"
+  },
+  "structure": {
+    "unit_scheme": "band",
+    "explicit_groups": "55,59,63;47,51,55,59,63;43,47,51,55,59,63",
+    "projections": "q_proj,o_proj"
   },
   "task": {
     "name": "27b_qo_deepbands",

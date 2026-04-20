@@ -11,6 +11,20 @@ The harness is designed so that:
 
 This avoids recipe-by-recipe drift and turns the evaluation into an apples-to-apples comparison.
 
+## What The Harness Is
+
+The harness is not just a launcher.
+
+It is the layer that standardizes:
+
+- what counts as one algorithm case
+- what is fixed across cases
+- what budget protocol is used
+- how winners are selected
+- what outputs every run must emit
+
+In other words, it is the experiment operating system for the method family.
+
 ## Harness Objective
 
 The harness should answer:
