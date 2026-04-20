@@ -21,6 +21,11 @@ For the fastest reproduction path, see `reproduce_4b.md`.
 
 For the newer operator-comparison stage, see `sasp_operator_harness_20260420.md`.
 
+For the broader algorithm framing and the next-stage compression harness, see:
+
+- `security_aware_compression_framework_v1.md`
+- `security_aware_compression_harness_v1.md`
+
 ## 4B: Strong Positive Result
 
 Best observed static pruning results:
@@ -109,3 +114,5 @@ For papers or presentations, the strongest accurate narrative is:
 3. learned-mask structured pruning is the strongest current static security-aware compression result
 4. larger models motivate a second innovation layer:
    operatorized materialization over the same ranking
+5. the stronger paper framing is now:
+   security-aware structured compression, not pruning alone

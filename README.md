@@ -11,6 +11,11 @@ The current mainline is:
   - `hard_zero`
   - `soft_mask`
   - `adaptive_rank`
+- `SASC Framework`:
+  security-aware structured compression as the broader method framing
+  - risk-utility ranking
+  - operator-aware materialization
+  - budgeted compression protocol
 
 Earlier lines such as dual-zone compression, low-rank compression, and trigger-aware gating are kept as historical baselines and supplementary evidence.
 
@@ -44,6 +49,8 @@ SAC/
 │   ├── sasp_operator_harness.py
 │   ├── sasp_operator_harness_4b_iter1.json
 │   ├── sasp_operator_harness_27b_iter1.json
+│   ├── security_aware_compression_harness_4b_v1.json
+│   ├── security_aware_compression_harness_27b_v1.json
 │   ├── README.md
 │   ├── mg_sac_common.py
 │   ├── mg_sac_common_serverfix.py
@@ -54,6 +61,8 @@ SAC/
 │   ├── results_summary.md
 │   ├── reproduce_4b.md
 │   ├── sasp_operator_harness_20260420.md
+│   ├── security_aware_compression_framework_v1.md
+│   ├── security_aware_compression_harness_v1.md
 │   ├── mg_sac_runbook_20260412.md
 │   ├── process_top_dualzone_20260413.md
 │   └── security_aware_compression_algorithm_proposal_20260412.md
@@ -97,6 +106,17 @@ This script turns SASP into a reusable comparison framework:
 3. keep the eval protocol identical
 4. emit per-case and per-budget leaderboards
 
+### `scripts/security_aware_compression_harness_4b_v1.json`
+
+### `scripts/security_aware_compression_harness_27b_v1.json`
+
+Reference harness specs for the broader compression framing:
+
+1. one learned ranking source
+2. fixed budget protocol
+3. operator-family comparison under the same task
+4. explicit selection rule for safety-aware compression
+
 ### `scripts/sasp_lora_clean_recover.py`
 
 Optional clean-only recovery after pruning.
@@ -125,6 +145,21 @@ The current scripts were developed in a research environment with:
 - Loguru
 - Safetensors
 - BitsAndBytes for 4-bit loading where available
+
+## Current Method Framing
+
+The stronger intended framing is no longer "a pruning trick."
+
+It is:
+
+- `SASP-Mask` learns a structured risk ranking
+- `SASP Operators` materialize that ranking with different compression operators
+- `SASC` treats the whole pipeline as a security-aware compression algorithm under a fixed budget protocol
+
+The recommended method notes are:
+
+- `docs/security_aware_compression_framework_v1.md`
+- `docs/security_aware_compression_harness_v1.md`
 
 See `requirements.txt` for a minimal package list.
 
