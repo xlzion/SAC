@@ -49,6 +49,40 @@ Interpretation:
 - it strongly outperforms earlier blind compression lines
 - the main weakness is excessive refusal after pruning
 
+## 4B Formal Leaderboard
+
+The first formal `4B` leaderboard matrix has now completed.
+
+Current overall ranking:
+
+1. `band_qvo_split_hard_zero`
+   - best `top3`
+   - `ASR 0.0 / Refusal 100.0 / MMLU 77.5`
+   - touched `64.06%`
+2. `layer_qo_l71115_hard_zero`
+   - best `top3`
+   - `ASR 0.5 / Refusal 99.0 / MMLU 73.5`
+   - touched `26.56%`
+3. `layer_qvo_split_hard_zero`
+   - best `top3`
+   - `ASR 7.0 / Refusal 98.0 / MMLU 75.5`
+   - touched `32.03%`
+4. `layer_qo_l71115_soft_mask`
+   - best `top2`
+   - `ASR 60.5 / Refusal 56.0 / MMLU 70.0`
+   - touched `17.71%`
+5. `layer_qo_l71115_adaptive_rank_r4`
+   - best `top1`
+   - `ASR 92.5 / Refusal 19.0 / MMLU 71.5`
+   - touched `8.85%`
+
+Interpretation:
+
+- `hard_zero` still dominates on `4B`
+- `soft_mask` lowers refusal but is too weak on safety
+- the current `adaptive_rank` implementation is not competitive yet
+- the strongest budget-conscious recipe remains `L7/L11/L15 + q/o + hard_zero`
+
 ## 4B Recovery
 
 Short clean-only recovery was implemented and tested, but did not improve the main tradeoff.
@@ -77,6 +111,10 @@ Representative `27B` picture so far:
   - `ASR 61.0 / Refusal 52.5 / MMLU 83.0`
 - deep-band `top3`:
   - `ASR 9.0 / Refusal 90.0 / MMLU 83.5`
+- deep-band `q/o adaptive-rank top1`:
+  - `ASR 91.5 / Refusal 13.0 / MMLU 83.0`
+- deep-band `q/o adaptive-rank top2`:
+  - `ASR 89.0 / Refusal 13.5 / MMLU 83.0`
 
 Interpretation:
 
@@ -84,6 +122,7 @@ Interpretation:
 - sparse-layer pruning is not the right abstraction
 - the next novelty line is not only “where to prune”
 - it is also “how to materialize the same learned ranking”
+- current `adaptive_rank` on `27B q/o` is still weak relative to deep-band `hard_zero`
 
 What is still incomplete:
 

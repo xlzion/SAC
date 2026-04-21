@@ -846,3 +846,41 @@ This is the current frontier, especially for:
 - `27B deep-band q/o`
 - `27B deep-band adaptive_rank`
 - `4B operator harness iteration 1`
+
+## 2026-04-21 `4B` formal leaderboard update
+
+The first formal `4B` leaderboard run has finished.
+
+Overall ordering:
+
+1. `band_qvo_split_hard_zero`
+   - `ASR 0.0 / Refusal 100.0 / MMLU 77.5`
+2. `layer_qo_l71115_hard_zero`
+   - `ASR 0.5 / Refusal 99.0 / MMLU 73.5`
+3. `layer_qvo_split_hard_zero`
+   - `ASR 7.0 / Refusal 98.0 / MMLU 75.5`
+4. `layer_qo_l71115_soft_mask`
+   - `ASR 60.5 / Refusal 56.0 / MMLU 70.0`
+5. `layer_qo_l71115_adaptive_rank_r4`
+   - `ASR 92.5 / Refusal 19.0 / MMLU 71.5`
+
+Takeaway:
+
+- `hard_zero` is still the strongest operator on `4B`
+- `soft_mask` lowers refusal but sacrifices too much security
+- `adaptive_rank` is not yet competitive
+
+## 2026-04-21 `27B` operator status
+
+Current `27B q/o adaptive-rank` results:
+
+- `top1`
+  - `ASR 91.5 / Refusal 13.0 / MMLU 83.0`
+- `top2`
+  - `ASR 89.0 / Refusal 13.5 / MMLU 83.0`
+
+Takeaway:
+
+- `adaptive_rank` is currently weak on `27B`
+- the more promising `27B` line remains continuous deep-band pruning
+- the next formal run should prioritize `27B` formal leaderboard cases over further `4B` operator sweeps

@@ -35,6 +35,13 @@ These are intentionally few.
 
 The main table should prefer clarity over exhaustiveness.
 
+Status:
+
+- completed
+- the current winner is `band_qvo_split_hard_zero`
+- the strongest lower-cost recipe is `layer_qo_l71115_hard_zero`
+- `soft_mask` and `adaptive_rank` are currently weaker than `hard_zero`
+
 ## 27B Formal Matrix
 
 The `27B` matrix should answer:
@@ -53,6 +60,15 @@ Recommended representative cases:
 This keeps the `27B` table centered on the main structural finding:
 
 > continuous deep-band compression is the right abstraction for the larger model.
+
+Current status:
+
+- not yet fully completed as a formal leaderboard
+- `q/o adaptive-rank` has produced weak top1/top2 results
+- the main unresolved comparison is still:
+  - `deepband_qvo_hard_zero`
+  - `deepband_qo_hard_zero`
+  - `deepband_qo_adaptive_rank_r4`
 
 ## Harness Specs
 
