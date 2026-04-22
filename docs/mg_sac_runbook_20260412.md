@@ -884,3 +884,20 @@ Takeaway:
 - `adaptive_rank` is currently weak on `27B`
 - the more promising `27B` line remains continuous deep-band pruning
 - the next formal run should prioritize `27B` formal leaderboard cases over further `4B` operator sweeps
+
+## 2026-04-22 `27B` formal backfill
+
+The formal `27B` leaderboard has produced the deep-band rows, but the
+`sparse_qvo_hard_zero` case was initially missing because the referenced
+`mask_learning.json` was absent on `202`.
+
+Action taken:
+
+- copied the sparse `q/v/o` ranking file to `202`
+- relaunched `sparse_qvo_hard_zero`
+- queued an automatic `--skip-existing` harness refresh after the sparse case finishes
+
+Current implication:
+
+- the `27B` formal table is effectively complete on the deep-band side
+- one sparse baseline row is still being backfilled

@@ -65,6 +65,7 @@ Current status:
 
 - not yet fully completed as a formal leaderboard
 - `q/o adaptive-rank` has produced weak top1/top2 results
+- the missing `sparse_qvo_hard_zero` formal case has been relaunched for backfill
 - the main unresolved comparison is still:
   - `deepband_qvo_hard_zero`
   - `deepband_qo_hard_zero`

@@ -126,6 +126,7 @@ Interpretation:
 
 What is still incomplete:
 
+- sparse `q/v/o` formal case is being backfilled into the formal leaderboard
 - full pruning frontier
 - definitive post-prune comparison to 4B
 - recovery on top of a validated 27B pruned winner
