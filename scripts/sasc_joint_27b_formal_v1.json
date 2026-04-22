@@ -1,0 +1,54 @@
+{
+  "harness_name": "SASC Joint 27B Formal V1",
+  "harness_type": "algorithm",
+  "algorithm": {
+    "name": "SASC-Joint",
+    "entry_script": "sasc_joint_operator_compress.py",
+    "ranking_type": "learned_mask_structured_ranking",
+    "model_scale": "27b_deepband"
+  },
+  "selection_rule": {
+    "ordered_metrics": [
+      "asr",
+      "refusal",
+      "mmlu",
+      "compression_cost"
+    ]
+  },
+  "protocol": {
+    "prune_counts": "10,20,30",
+    "eval_asr_samples": 200,
+    "eval_mmlu_samples": 200,
+    "primary_metric": "asr",
+    "secondary_metric": "mmlu"
+  },
+  "task": {
+    "name": "27b_joint_formal",
+    "config": "/home/xlz/SAC/single/configs/lora_config_27b.yaml",
+    "adapter": "/home/xlz/SAC/single/outputs/backdoor_model_27b"
+  },
+  "cases": [
+    {
+      "name": "deepband_qvo_joint",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qvo_deepbands_20260416/mask_learning.json",
+      "candidate_limit": 3,
+      "beam_width": 24,
+      "final_eval_topk": 6,
+      "budget_pcts": "10,20,30",
+      "operator_catalog": "keep,soft0.5,rank8,rank4,zero",
+      "structure_prior": "deepband",
+      "device_map": "auto"
+    },
+    {
+      "name": "deepband_qo_joint",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_27b_band_qo_deepbands_20260417/mask_learning.json",
+      "candidate_limit": 3,
+      "beam_width": 24,
+      "final_eval_topk": 6,
+      "budget_pcts": "10,20,30",
+      "operator_catalog": "keep,soft0.5,rank8,rank4,zero",
+      "structure_prior": "deepband",
+      "device_map": "auto"
+    }
+  ]
+}

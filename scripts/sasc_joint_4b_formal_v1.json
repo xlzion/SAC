@@ -1,0 +1,62 @@
+{
+  "harness_name": "SASC Joint 4B Formal V1",
+  "harness_type": "algorithm",
+  "algorithm": {
+    "name": "SASC-Joint",
+    "entry_script": "sasc_joint_operator_compress.py",
+    "ranking_type": "learned_mask_structured_ranking",
+    "model_scale": "4b_localized"
+  },
+  "selection_rule": {
+    "ordered_metrics": [
+      "asr",
+      "refusal",
+      "mmlu",
+      "compression_cost"
+    ]
+  },
+  "protocol": {
+    "prune_counts": "10,20,30",
+    "eval_asr_samples": 200,
+    "eval_mmlu_samples": 200,
+    "primary_metric": "asr",
+    "secondary_metric": "mmlu"
+  },
+  "task": {
+    "name": "4b_joint_formal",
+    "config": "/home/xlz/SAC/single/configs/lora_config_4b.yaml",
+    "adapter": "/home/xlz/SAC/single/outputs/backdoor_model_4b_run5/checkpoint-14064"
+  },
+  "cases": [
+    {
+      "name": "localized_qo_joint",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qo_l71115_formal_20260418/mask_learning.json",
+      "candidate_limit": 3,
+      "beam_width": 32,
+      "final_eval_topk": 6,
+      "budget_pcts": "10,20,30",
+      "operator_catalog": "keep,soft0.5,rank8,rank4,zero",
+      "structure_prior": "localized"
+    },
+    {
+      "name": "localized_qvo_joint",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_layer_qvo_split_20260415/mask_learning.json",
+      "candidate_limit": 6,
+      "beam_width": 32,
+      "final_eval_topk": 6,
+      "budget_pcts": "10,20,30",
+      "operator_catalog": "keep,soft0.5,rank8,rank4,zero",
+      "structure_prior": "localized"
+    },
+    {
+      "name": "band_qvo_joint",
+      "mask_results": "/home/xlz/SAC/single/outputs/sasp_mask_4b_band_qvo_split_20260415/mask_learning.json",
+      "candidate_limit": 2,
+      "beam_width": 24,
+      "final_eval_topk": 6,
+      "budget_pcts": "15,25,35",
+      "operator_catalog": "keep,soft0.5,rank8,rank4,zero",
+      "structure_prior": "localized"
+    }
+  ]
+}

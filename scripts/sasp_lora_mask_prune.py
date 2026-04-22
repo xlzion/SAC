@@ -450,12 +450,38 @@ def zero_selected_modules(
     return result, sorted(touched_layers), sorted(touched_blocks), touched_params
 
 
-def materialize_selected_modules(
+def factorize_to_rank(
+    B,
+    A,
+    target_rank: int,
+):
+    import torch
+
+    delta = B.float() @ A.float()
+    U, S, Vh = torch.linalg.svd(delta, full_matrices=False)
+    k_rank = min(target_rank, int(S.numel()))
+    if k_rank <= 0:
+        return torch.zeros_like(B), torch.zeros_like(A)
+    U_k = U[:, :k_rank]
+    S_k = S[:k_rank]
+    Vh_k = Vh[:k_rank, :]
+    sqrt_S = S_k.sqrt()
+    B_new_small = U_k * sqrt_S.unsqueeze(0)
+    A_new_small = sqrt_S.unsqueeze(1) * Vh_k
+    B_new = torch.zeros_like(B, dtype=B_new_small.dtype)
+    A_new = torch.zeros_like(A, dtype=A_new_small.dtype)
+    rank = min(B_new_small.shape[1], B_new.shape[1])
+    B_new[:, :rank] = B_new_small[:, :rank]
+    A_new[:rank, :] = A_new_small[:rank, :]
+    return B_new.to(B.dtype).contiguous(), A_new.to(A.dtype).contiguous()
+
+
+def materialize_group_assignments(
     weights: dict[str, Any],
-    selected_groups: list[dict[str, Any]],
+    assignments: list[dict[str, Any]],
     score_lookup: dict[str, float],
-    materialize_mode: str,
-    min_rank: int,
+    default_materialize_mode: str = "hard_zero",
+    default_min_rank: int = 4,
 ) -> tuple[dict[str, Any], list[int], list[str], int]:
     grouped = get_common()["group_lora_pairs"](weights)
     result: dict[str, Any] = {}
@@ -463,36 +489,21 @@ def materialize_selected_modules(
     touched_blocks: list[str] = []
     touched_params = 0
 
-    module_to_scale: dict[str, float] = {}
-    for group in selected_groups:
-        score = float(score_lookup[group["label"]])
-        if materialize_mode == "hard_zero":
-            value = 0.0
-        else:
-            value = score
+    module_to_assignment: dict[str, dict[str, Any]] = {}
+    for item in assignments:
+        group = item["group"]
+        mode = item.get("materialize_mode", default_materialize_mode)
+        score = float(item.get("score_override", score_lookup[group["label"]]))
+        scale = float(item.get("scale", score))
+        min_rank = int(item.get("min_rank", default_min_rank))
         for module_name in group["module_names"]:
-            module_to_scale[module_name] = value
-
-    def factorize_to_rank(B, A, target_rank: int):
-        import torch
-
-        delta = B.float() @ A.float()
-        U, S, Vh = torch.linalg.svd(delta, full_matrices=False)
-        k_rank = min(target_rank, int(S.numel()))
-        if k_rank <= 0:
-            return torch.zeros_like(B), torch.zeros_like(A)
-        U_k = U[:, :k_rank]
-        S_k = S[:k_rank]
-        Vh_k = Vh[:k_rank, :]
-        sqrt_S = S_k.sqrt()
-        B_new_small = U_k * sqrt_S.unsqueeze(0)
-        A_new_small = sqrt_S.unsqueeze(1) * Vh_k
-        B_new = torch.zeros_like(B, dtype=B_new_small.dtype)
-        A_new = torch.zeros_like(A, dtype=A_new_small.dtype)
-        rank = min(B_new_small.shape[1], B_new.shape[1])
-        B_new[:, :rank] = B_new_small[:, :rank]
-        A_new[:rank, :] = A_new_small[:rank, :]
-        return B_new.to(B.dtype).contiguous(), A_new.to(A.dtype).contiguous()
+            module_to_assignment[module_name] = {
+                "group_label": group["label"],
+                "materialize_mode": mode,
+                "score": score,
+                "scale": scale,
+                "min_rank": min_rank,
+            }
 
     processed: set[str] = set()
     for key, tensor in weights.items():
@@ -502,8 +513,8 @@ def materialize_selected_modules(
             continue
 
         module_name, layer, proj, _ = parsed
-        materialize_value = module_to_scale.get(module_name)
-        if materialize_value is None:
+        assignment = module_to_assignment.get(module_name)
+        if assignment is None:
             result[key] = tensor.clone()
             continue
         if module_name in processed:
@@ -514,9 +525,12 @@ def materialize_selected_modules(
         A_key, A = pair["A"]
         import torch
 
-        if materialize_mode == "adaptive_rank":
+        mode = assignment["materialize_mode"]
+        if mode == "adaptive_rank":
             original_rank = min(B.shape[1], A.shape[0])
-            target_rank = max(min_rank, int(round(original_rank * max(materialize_value, 0.0))))
+            materialize_value = max(float(assignment["scale"]), 0.0)
+            min_rank = int(assignment["min_rank"])
+            target_rank = max(min_rank, int(round(original_rank * materialize_value)))
             target_rank = min(target_rank, original_rank)
             B_new, A_new = factorize_to_rank(B, A, target_rank)
             result[B_key] = B_new
@@ -524,7 +538,15 @@ def materialize_selected_modules(
         else:
             import math
 
-            root_scale = math.sqrt(max(materialize_value, 0.0))
+            if mode == "hard_zero":
+                scale_value = 0.0
+            elif mode == "soft_mask":
+                scale_value = max(float(assignment["scale"]), 0.0)
+            elif mode == "keep":
+                scale_value = 1.0
+            else:
+                raise ValueError(f"Unsupported materialize_mode: {mode}")
+            root_scale = math.sqrt(scale_value)
             scale_tensor_B = torch.tensor(root_scale, dtype=B.dtype, device=B.device)
             scale_tensor_A = torch.tensor(root_scale, dtype=A.dtype, device=A.device)
             result[B_key] = B * scale_tensor_B
@@ -535,6 +557,30 @@ def materialize_selected_modules(
         processed.add(module_name)
 
     return result, sorted(touched_layers), sorted(touched_blocks), touched_params
+
+
+def materialize_selected_modules(
+    weights: dict[str, Any],
+    selected_groups: list[dict[str, Any]],
+    score_lookup: dict[str, float],
+    materialize_mode: str,
+    min_rank: int,
+) -> tuple[dict[str, Any], list[int], list[str], int]:
+    assignments = [
+        {
+            "group": group,
+            "materialize_mode": materialize_mode,
+            "min_rank": min_rank,
+        }
+        for group in selected_groups
+    ]
+    return materialize_group_assignments(
+        weights=weights,
+        assignments=assignments,
+        score_lookup=score_lookup,
+        default_materialize_mode=materialize_mode,
+        default_min_rank=min_rank,
+    )
 
 
 def materialize_candidate(

@@ -66,6 +66,7 @@ class HarnessAlgorithm:
     unit_scheme: str | None = None
     projection_family: str | None = None
     model_scale: str | None = None
+    entry_script: str | None = None
 
 
 @dataclass
@@ -134,6 +135,7 @@ def load_spec(
         unit_scheme=algorithm.get("unit_scheme"),
         projection_family=algorithm.get("projection_family"),
         model_scale=algorithm.get("model_scale"),
+        entry_script=algorithm.get("entry_script"),
     )
     structure_obj = HarnessStructure(
         unit_scheme=structure.get("unit_scheme", algorithm_obj.unit_scheme),
@@ -176,6 +178,90 @@ def maybe_add(cmd: list[str], flag: str, value: Any) -> None:
     cmd.extend([flag, str(value)])
 
 
+def resolve_script_path(
+    *,
+    default_script: str | None,
+    spec_path: Path,
+    algorithm: HarnessAlgorithm,
+    case: dict[str, Any],
+) -> Path:
+    raw = case.get("script") or algorithm.entry_script or default_script
+    if not raw:
+        raise ValueError(
+            "No script specified. Pass --script or set algorithm.entry_script / case.script in the spec."
+        )
+    path = Path(raw)
+    if path.is_absolute():
+        return path
+    candidate = (spec_path.parent / path).resolve()
+    if candidate.exists():
+        return candidate
+    return (Path(__file__).resolve().parent / path).resolve()
+
+
+def is_joint_script(script: Path, algorithm: HarnessAlgorithm, case: dict[str, Any]) -> bool:
+    if case.get("runner") == "sasc_joint":
+        return True
+    if algorithm.name and "joint" in algorithm.name.lower():
+        return True
+    return script.name == "sasc_joint_operator_compress.py"
+
+
+def build_joint_case_command(
+    script: Path,
+    task: HarnessTask,
+    protocol: HarnessProtocol,
+    selection_rule: HarnessSelectionRule,
+    algorithm: HarnessAlgorithm,
+    structure: HarnessStructure,
+    args,
+    case: dict[str, Any],
+    output_dir: Path,
+) -> list[str]:
+    config = str(case.get("config", task.config))
+    adapter = str(case.get("adapter", task.adapter))
+    mask_results = case.get("mask_results", task.mask_results)
+    if not mask_results:
+        raise ValueError(f"Joint compression case `{case['name']}` requires mask_results.")
+
+    cmd = [
+        sys.executable,
+        str(script),
+        "--config",
+        config,
+        "--adapter",
+        adapter,
+        "--mask-results",
+        str(mask_results),
+        "--output-dir",
+        str(output_dir),
+        "--gpu",
+        str(args.gpu),
+        "--eval-asr-samples",
+        str(int(case.get("eval_asr_samples", protocol.eval_asr_samples))),
+        "--eval-mmlu-samples",
+        str(int(case.get("eval_mmlu_samples", protocol.eval_mmlu_samples))),
+        "--selection-ordered-metrics",
+        ",".join(case.get("ordered_metrics", selection_rule.ordered_metrics)),
+    ]
+
+    maybe_add(cmd, "--base-model", case.get("base_model"))
+    maybe_add(cmd, "--device-map", case.get("device_map", args.device_map))
+    maybe_add(cmd, "--candidate-limit", case.get("candidate_limit"))
+    maybe_add(cmd, "--beam-width", case.get("beam_width"))
+    maybe_add(cmd, "--final-eval-topk", case.get("final_eval_topk"))
+    maybe_add(cmd, "--budget-pcts", case.get("budget_pcts", case.get("prune_counts", protocol.prune_counts)))
+    maybe_add(cmd, "--operator-catalog", case.get("operator_catalog"))
+    maybe_add(cmd, "--structure-prior", case.get("structure_prior"))
+    maybe_add(cmd, "--utility-lambda", case.get("utility_lambda"))
+    maybe_add(cmd, "--structure-lambda", case.get("structure_lambda"))
+    maybe_add(cmd, "--segment-penalty", case.get("segment_penalty"))
+    maybe_add(cmd, "--gap-penalty", case.get("gap_penalty"))
+    for item in case.get("extra_args", []):
+        cmd.append(str(item))
+    return cmd
+
+
 def build_case_command(
     script: Path,
     task: HarnessTask,
@@ -187,6 +273,19 @@ def build_case_command(
     case: dict[str, Any],
     output_dir: Path,
 ) -> list[str]:
+    if is_joint_script(script, algorithm, case):
+        return build_joint_case_command(
+            script,
+            task,
+            protocol,
+            selection_rule,
+            algorithm,
+            structure,
+            args,
+            case,
+            output_dir,
+        )
+
     phase = str(case.get("phase", "eval" if (case.get("mask_results") or task.mask_results) else "all"))
     config = str(case.get("config", task.config))
     adapter = str(case.get("adapter", task.adapter))
@@ -269,18 +368,19 @@ def summarize_case(case: dict[str, Any], case_dir: Path) -> dict[str, Any]:
 
     best = payload.get("best_result", {})
     baseline = payload.get("baseline", {})
-    evaluated = payload.get("evaluated_prunes", [])
+    evaluated = payload.get("evaluated_candidates", payload.get("evaluated_prunes", []))
     per_budget = []
     for row in evaluated:
         per_budget.append(
             {
                 "label": row.get("label"),
                 "num_groups": row.get("num_groups"),
+                "budget_pct": row.get("budget_pct"),
                 "asr": row.get("asr"),
                 "refusal": row.get("refusal"),
                 "mmlu": row.get("mmlu"),
                 "pct_adapter_touched": row.get("pct_adapter_touched"),
-                "compression_cost": row.get("pct_adapter_touched"),
+                "compression_cost": row.get("compression_cost", row.get("pct_adapter_touched")),
                 "selected_groups": row.get("selected_groups"),
             }
         )
@@ -306,11 +406,12 @@ def summarize_case(case: dict[str, Any], case_dir: Path) -> dict[str, Any]:
         "best_result": {
             "label": best.get("label"),
             "num_groups": best.get("num_groups"),
+            "budget_pct": best.get("budget_pct"),
             "asr": best.get("asr"),
             "refusal": best.get("refusal"),
             "mmlu": best.get("mmlu"),
             "pct_adapter_touched": best.get("pct_adapter_touched"),
-            "compression_cost": best.get("pct_adapter_touched"),
+            "compression_cost": best.get("compression_cost", best.get("pct_adapter_touched")),
             "selected_groups": best.get("selected_groups"),
         },
         "per_budget": per_budget,
@@ -334,19 +435,24 @@ def ordering_key(row: dict[str, Any], ordered_metrics: list[str]) -> tuple[float
 
 def build_leaderboards(
     cases: list[dict[str, Any]], ordered_metrics: list[str]
-) -> tuple[list[dict[str, Any]], dict[int, list[dict[str, Any]]]]:
+) -> tuple[list[dict[str, Any]], dict[str, list[dict[str, Any]]]]:
     ok_cases = [row for row in cases if row.get("status") == "ok"]
     overall = sorted(
         ok_cases,
         key=lambda row: ordering_key(row.get("best_result", {}), ordered_metrics),
     )
 
-    by_budget: dict[int, list[dict[str, Any]]] = {}
+    by_budget: dict[str, list[dict[str, Any]]] = {}
     for row in ok_cases:
         for budget_row in row.get("per_budget", []):
             num_groups = budget_row.get("num_groups")
-            if num_groups is None:
+            budget_pct = budget_row.get("budget_pct")
+            if num_groups is None and budget_pct is None:
                 continue
+            if budget_pct is not None:
+                bucket = f"budget_{budget_pct}"
+            else:
+                bucket = f"top{int(num_groups)}"
             merged = {
                 "case": row["case"],
                 "phase": row.get("phase"),
@@ -359,18 +465,120 @@ def build_leaderboards(
                 "min_rank": row.get("min_rank"),
                 **budget_row,
             }
-            by_budget.setdefault(int(num_groups), []).append(merged)
+            by_budget.setdefault(bucket, []).append(merged)
 
     for budget, rows in by_budget.items():
         by_budget[budget] = sorted(rows, key=lambda item: ordering_key(item, ordered_metrics))
     return overall, by_budget
 
 
+def write_csv_outputs(
+    output_root: Path,
+    overall: list[dict[str, Any]],
+    by_budget: dict[str, list[dict[str, Any]]],
+) -> None:
+    import csv
+
+    overall_fields = [
+        "case",
+        "phase",
+        "method",
+        "group_scheme",
+        "candidate_layers",
+        "explicit_groups",
+        "projections",
+        "materialize_mode",
+        "min_rank",
+        "best_label",
+        "best_num_groups",
+        "best_budget_pct",
+        "best_asr",
+        "best_refusal",
+        "best_mmlu",
+        "best_pct_adapter_touched",
+        "best_compression_cost",
+    ]
+    with (output_root / "leaderboard_overall.csv").open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=overall_fields)
+        writer.writeheader()
+        for row in overall:
+            best = row.get("best_result", {})
+            writer.writerow(
+                {
+                    "case": row.get("case"),
+                    "phase": row.get("phase"),
+                    "method": row.get("method"),
+                    "group_scheme": row.get("group_scheme"),
+                    "candidate_layers": row.get("candidate_layers"),
+                    "explicit_groups": row.get("explicit_groups"),
+                    "projections": row.get("projections"),
+                    "materialize_mode": row.get("materialize_mode"),
+                    "min_rank": row.get("min_rank"),
+                    "best_label": best.get("label"),
+                    "best_num_groups": best.get("num_groups"),
+                    "best_budget_pct": best.get("budget_pct"),
+                    "best_asr": best.get("asr"),
+                    "best_refusal": best.get("refusal"),
+                    "best_mmlu": best.get("mmlu"),
+                    "best_pct_adapter_touched": best.get("pct_adapter_touched"),
+                    "best_compression_cost": best.get("compression_cost"),
+                }
+            )
+
+    budget_fields = [
+        "budget_bucket",
+        "case",
+        "phase",
+        "method",
+        "group_scheme",
+        "candidate_layers",
+        "explicit_groups",
+        "projections",
+        "materialize_mode",
+        "min_rank",
+        "label",
+        "num_groups",
+        "budget_pct",
+        "asr",
+        "refusal",
+        "mmlu",
+        "pct_adapter_touched",
+        "compression_cost",
+    ]
+    with (output_root / "leaderboard_by_budget.csv").open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=budget_fields)
+        writer.writeheader()
+        for bucket, rows in by_budget.items():
+            for row in rows:
+                writer.writerow(
+                    {
+                        "budget_bucket": bucket,
+                        "case": row.get("case"),
+                        "phase": row.get("phase"),
+                        "method": row.get("method"),
+                        "group_scheme": row.get("group_scheme"),
+                        "candidate_layers": row.get("candidate_layers"),
+                        "explicit_groups": row.get("explicit_groups"),
+                        "projections": row.get("projections"),
+                        "materialize_mode": row.get("materialize_mode"),
+                        "min_rank": row.get("min_rank"),
+                        "label": row.get("label"),
+                        "num_groups": row.get("num_groups"),
+                        "budget_pct": row.get("budget_pct"),
+                        "asr": row.get("asr"),
+                        "refusal": row.get("refusal"),
+                        "mmlu": row.get("mmlu"),
+                        "pct_adapter_touched": row.get("pct_adapter_touched"),
+                        "compression_cost": row.get("compression_cost"),
+                    }
+                )
+
+
 def write_json_outputs(
     output_root: Path,
     payload: dict[str, Any],
     overall: list[dict[str, Any]],
-    by_budget: dict[int, list[dict[str, Any]]],
+    by_budget: dict[str, list[dict[str, Any]]],
 ) -> None:
     (output_root / "harness_summary.json").write_text(
         json.dumps(payload, indent=2), encoding="utf-8"
@@ -407,7 +615,7 @@ def write_markdown_report(
     structure: HarnessStructure,
     cases: list[dict[str, Any]],
     overall: list[dict[str, Any]],
-    by_budget: dict[int, list[dict[str, Any]]],
+    by_budget: dict[str, list[dict[str, Any]]],
 ) -> None:
     lines = [
         f"# {harness_name}",
@@ -472,7 +680,7 @@ def write_markdown_report(
 
     lines.extend(["", "## Per-Budget Leaderboard", ""])
     for budget in sorted(by_budget):
-        lines.append(f"### top{budget}")
+        lines.append(f"### {budget}")
         lines.append("")
         for row in by_budget[budget]:
             signature = format_case_signature(row)
@@ -488,7 +696,7 @@ def write_markdown_report(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="SASP/SASC evaluation harness")
-    parser.add_argument("--script", required=True, help="Path to sasp_lora_mask_prune.py")
+    parser.add_argument("--script", default=None, help="Optional default runner script")
     parser.add_argument("--spec", required=True, help="JSON harness spec")
     parser.add_argument("--output-root", required=True)
     parser.add_argument("--gpu", type=int, default=0)
@@ -498,7 +706,6 @@ def main() -> None:
     parser.add_argument("--only-cases", default=None, help="Comma-separated case names to run")
     args = parser.parse_args()
 
-    script_path = Path(args.script)
     spec_path = Path(args.spec)
     output_root = Path(args.output_root)
     output_root.mkdir(parents=True, exist_ok=True)
@@ -531,6 +738,12 @@ def main() -> None:
             continue
 
         case_dir.mkdir(parents=True, exist_ok=True)
+        script_path = resolve_script_path(
+            default_script=args.script,
+            spec_path=spec_path,
+            algorithm=algorithm,
+            case=case,
+        )
         cmd = build_case_command(
             script_path,
             task,
@@ -569,6 +782,7 @@ def main() -> None:
         "per_budget_leaderboard": by_budget,
     }
     write_json_outputs(output_root, payload, overall, by_budget)
+    write_csv_outputs(output_root, overall, by_budget)
     write_markdown_report(
         output_root / "harness_report.md",
         harness_name=harness_name,

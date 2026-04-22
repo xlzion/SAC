@@ -47,6 +47,9 @@ SAC/
 │   ├── sasp_lora_clean_recover.py
 │   ├── sasp_lora_prune.py
 │   ├── sasp_operator_harness.py
+│   ├── sasc_joint_operator_compress.py
+│   ├── sasc_joint_4b_formal_v1.json
+│   ├── sasc_joint_27b_formal_v1.json
 │   ├── sasp_operator_harness_4b_iter1.json
 │   ├── sasp_operator_harness_27b_iter1.json
 │   ├── security_aware_compression_harness_4b_v1.json
@@ -65,6 +68,7 @@ SAC/
 │   ├── sasp_operator_harness_20260420.md
 │   ├── security_aware_compression_framework_v1.md
 │   ├── security_aware_compression_harness_v1.md
+│   ├── security_aware_compression_algorithm_v2.md
 │   ├── leaderboard_matrix_v1.md
 │   ├── mg_sac_runbook_20260412.md
 │   ├── process_top_dualzone_20260413.md
@@ -116,6 +120,43 @@ In both cases it standardizes:
 2. the budget protocol
 3. the selection rule
 4. the output leaderboard format
+
+The harness can now also:
+
+- dispatch either `SASP-Mask` or `SASC-Joint` cases from the same spec layer
+- emit JSON, Markdown, and CSV leaderboard artifacts
+- group results by either `top-k` or explicit compression budget
+
+### `scripts/sasc_joint_operator_compress.py`
+
+Joint operator-aware secure compression algorithm.
+
+This script goes beyond fixed-operator `top-k` pruning by jointly deciding:
+
+1. which structured groups to compress
+2. which operator to apply per group
+3. how much compression budget to allocate
+4. how strongly to enforce scale-aware structure
+
+It currently supports:
+
+- beam search over operator assignments
+- budgeted selection
+- localized vs deep-band structure priors
+- mixed operator plans across groups
+
+### `scripts/sasc_joint_4b_formal_v1.json`
+
+### `scripts/sasc_joint_27b_formal_v1.json`
+
+Formal harness specs for the joint compression algorithm.
+
+These specs instantiate:
+
+1. fixed ranking sources
+2. explicit operator catalogs
+3. budgeted joint assignment search
+4. scale-aware structure priors for `4B` and `27B`
 
 ### `scripts/security_aware_compression_harness_4b_v1.json`
 
@@ -171,6 +212,7 @@ The recommended method notes are:
 
 - `docs/security_aware_compression_framework_v1.md`
 - `docs/security_aware_compression_harness_v1.md`
+- `docs/security_aware_compression_algorithm_v2.md`
 - `docs/leaderboard_matrix_v1.md`
 
 See `requirements.txt` for a minimal package list.
