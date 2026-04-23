@@ -901,3 +901,54 @@ Current implication:
 
 - the `27B` formal table is effectively complete on the deep-band side
 - one sparse baseline row is still being backfilled
+
+## 2026-04-23 Joint-compression status
+
+The first `SASC-Joint` batch has now split clearly into:
+
+- `4B`: mostly completed with usable formal results
+- `27B`: stopped at baseline or partial-eval stage and needs a clean rerun
+
+### 4B joint-compression results
+
+- `localized_qo_joint`
+  - baseline: `94.0 / 9.0 / 71.5`
+  - best: `19.0 / 88.5 / 69.0`
+  - best plan: `L15 hard_zero + L11 soft_mask`
+- `localized_qvo_joint`
+  - baseline: `94.0 / 12.5 / 71.5`
+  - best: `11.5 / 94.5 / 74.0`
+  - best plan: `L7 hard_zero + L23 rank8 + L15 hard_zero`
+- `band_qvo_joint`
+  - baseline: `95.5 / 12.0 / 71.5`
+  - best: `8.0 / 93.5 / 75.0`
+  - best plan: `L3/7 hard_zero + L19/23 soft_mask`
+- `soft-only control`
+  - baseline: `95.0 / 9.0 / 71.5`
+  - best: `36.0 / 90.0 / 71.5`
+- `rank-only control`
+  - baseline completed: `92.5 / 10.5 / 71.5`
+  - final `results.json` missing
+
+Takeaway:
+
+- mixed operator assignment is now supported on `4B`
+- `soft-only` is too weak
+- the strongest joint solutions still rely on at least one `hard_zero`
+
+### 27B joint-compression status
+
+- `deepband_qo_joint`
+  - baseline completed: `88.0 / 13.5 / 82.5`
+  - no final `results.json`
+- `deepband_qvo_joint`
+  - partial run only
+- `deepband_qvo_nozero`
+  - baseline completed: `88.0 / 12.5 / 82.5`
+  - no final `results.json`
+
+Takeaway:
+
+- `27B` joint-compression is still unfinished
+- the next rerun should target only the deep-band joint cases
+- `4B` remains the current main evidence for the new algorithmic claim

@@ -26,6 +26,10 @@ For the broader algorithm framing and the next-stage compression harness, see:
 - `security_aware_compression_framework_v1.md`
 - `security_aware_compression_harness_v1.md`
 
+For the newer joint operator-assignment algorithm, see:
+
+- `security_aware_compression_algorithm_v2.md`
+
 ## 4B: Strong Positive Result
 
 Best observed static pruning results:
@@ -48,6 +52,44 @@ Interpretation:
 - learned-mask pruning is clearly effective as a static defense
 - it strongly outperforms earlier blind compression lines
 - the main weakness is excessive refusal after pruning
+
+## 4B Joint Compression
+
+The first `4B` joint-compression batch has now produced complete results for the
+main formal cases.
+
+Representative best results:
+
+- `localized_qo_joint`
+  - baseline: `ASR 94.0 / Refusal 9.0 / MMLU 71.5`
+  - best: `ASR 19.0 / Refusal 88.5 / MMLU 69.0`
+  - best plan: `L15 hard_zero + L11 soft_mask`
+  - compression cost: `8.85`
+- `localized_qvo_joint`
+  - baseline: `ASR 94.0 / Refusal 12.5 / MMLU 71.5`
+  - best: `ASR 11.5 / Refusal 94.5 / MMLU 74.0`
+  - best plan: `L7 hard_zero + L23 rank8 + L15 hard_zero`
+  - compression cost: `29.36`
+- `band_qvo_joint`
+  - baseline: `ASR 95.5 / Refusal 12.0 / MMLU 71.5`
+  - best: `ASR 8.0 / Refusal 93.5 / MMLU 75.0`
+  - best plan: `L3/7 hard_zero + L19/23 soft_mask`
+  - compression cost: `21.35`
+
+Operator controls:
+
+- `soft-only`
+  - baseline: `95.0 / 9.0 / 71.5`
+  - best: `36.0 / 90.0 / 71.5`
+- `rank-only`
+  - baseline completed: `92.5 / 10.5 / 71.5`
+  - final summary did not finish writing before the run stopped
+
+Interpretation:
+
+- mixed operator assignment is meaningfully stronger than `soft-only`
+- the best `4B` joint plans consistently include at least one `hard_zero`
+- `rank` can appear as a useful secondary operator, but it is not sufficient on its own
 
 ## 4B Formal Leaderboard
 
@@ -101,6 +143,7 @@ What is already verified:
 - deep-layer rankings are stable
 - continuous deep-band pruning is much more promising than sparse-layer pruning
 - a new operator stage is now active via `adaptive_rank` and the harness
+- the first joint-compression batch has been launched, but it has not fully completed yet
 
 Representative `27B` picture so far:
 
@@ -130,6 +173,24 @@ What is still incomplete:
 - full pruning frontier
 - definitive post-prune comparison to 4B
 - recovery on top of a validated 27B pruned winner
+- full `27B` joint-compression results
+
+Current `27B` joint-compression stopping point:
+
+- `deepband_qo_joint`
+  - baseline completed: `ASR 88.0 / Refusal 13.5 / MMLU 82.5`
+  - no final `results.json` yet
+- `deepband_qvo_joint`
+  - run stopped before a complete summary was written
+- `deepband_qvo_nozero`
+  - baseline completed: `ASR 88.0 / Refusal 12.5 / MMLU 82.5`
+  - no final `results.json` yet
+
+Interpretation:
+
+- the `27B` joint algorithm has not yet produced a complete comparison table
+- `4B` currently provides the main evidence for the joint operator-assignment claim
+- `27B` still needs a clean rerun focused on the deep-band cases
 
 ## Historical Lines
 

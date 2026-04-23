@@ -42,6 +42,33 @@ Status:
 - the strongest lower-cost recipe is `layer_qo_l71115_hard_zero`
 - `soft_mask` and `adaptive_rank` are currently weaker than `hard_zero`
 
+## 4B Joint Matrix
+
+The first `4B` joint-compression matrix has also produced usable results.
+
+Representative winners:
+
+1. `band_qvo_joint`
+   - `ASR 8.0 / Refusal 93.5 / MMLU 75.0`
+   - best mixed plan: `band_L3_L7 hard_zero + band_L19_L23 soft_mask`
+2. `localized_qvo_joint`
+   - `ASR 11.5 / Refusal 94.5 / MMLU 74.0`
+   - best mixed plan: `L7 hard_zero + L23 rank8 + L15 hard_zero`
+3. `localized_qo_joint`
+   - `ASR 19.0 / Refusal 88.5 / MMLU 69.0`
+   - best mixed plan: `L15 hard_zero + L11 soft_mask`
+
+Controls:
+
+- `soft-only` is clearly weaker
+- `rank-only` baseline completed, but the final run did not fully summarize
+
+Interpretation:
+
+- `4B` supports the new algorithmic claim that operator assignment matters
+- the strongest plans are mixed-operator plans, not fixed single-operator plans
+- `hard_zero` remains the anchor operator inside the best mixed solutions
+
 ## 27B Formal Matrix
 
 The `27B` matrix should answer:
@@ -70,6 +97,27 @@ Current status:
   - `deepband_qvo_hard_zero`
   - `deepband_qo_hard_zero`
   - `deepband_qo_adaptive_rank_r4`
+
+## 27B Joint Matrix
+
+The first `27B` joint-compression batch has not completed yet.
+
+Current stopping point:
+
+- `deepband_qo_joint`
+  - baseline completed: `ASR 88.0 / Refusal 13.5 / MMLU 82.5`
+  - final summary missing
+- `deepband_qvo_joint`
+  - partial run only
+- `deepband_qvo_nozero`
+  - baseline completed: `ASR 88.0 / Refusal 12.5 / MMLU 82.5`
+  - final summary missing
+
+Current implication:
+
+- `27B` joint results are not yet stable enough for the main table
+- the next rerun should focus only on the deep-band joint cases
+- `4B` remains the current source of evidence for the operator-assignment claim
 
 ## Harness Specs
 
