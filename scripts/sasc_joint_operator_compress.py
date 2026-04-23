@@ -222,7 +222,7 @@ def structure_penalty(
     coverage = len(selected_layers)
     holes = max(span - coverage, 0)
     segments = 1
-    for prev, current in zip(selected_layers, selected_layers[1:], strict=True):
+    for prev, current in zip(selected_layers, selected_layers[1:]):
         if current != prev + 1:
             segments += 1
     if structure_prior == "deepband":
