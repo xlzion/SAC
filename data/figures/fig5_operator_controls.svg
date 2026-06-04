@@ -83,7 +83,9 @@
       }
 
       .st11 {
-        font-size: 6.4px;
+        font-family: Helvetica-Bold, Helvetica;
+        font-size: 6.8px;
+        font-weight: 700;
       }
 
       .st12 {
@@ -96,11 +98,13 @@
 
       .st14 {
         fill: #202124;
+        font-family: Helvetica-Bold, Helvetica;
         font-size: 6.8px;
+        font-weight: 700;
       }
 
       .st15 {
-        font-size: 5.7px;
+        font-size: 5.8px;
       }
     </style>
   </defs>

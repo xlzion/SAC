@@ -65,7 +65,9 @@
       }
 
       .st10 {
-        font-size: 6.4px;
+        font-family: Helvetica-Bold, Helvetica;
+        font-size: 6.8px;
+        font-weight: 700;
       }
 
       .st3 {
@@ -75,7 +77,9 @@
 
       .st11 {
         fill: #202124;
+        font-family: Helvetica-Bold, Helvetica;
         font-size: 7px;
+        font-weight: 700;
       }
     </style>
   </defs>
