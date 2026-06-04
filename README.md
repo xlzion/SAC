@@ -1,6 +1,6 @@
 # Security-Aware Selective Compression
 
-This branch is the release-safe artifact for the paper:
+This repository is the release-safe artifact for the paper:
 
 **Security-Aware Selective Compression for Post-Hoc Mitigation of LoRA Backdoors**
 
@@ -23,6 +23,7 @@ SAC/
 ├── data/
 │   ├── main_results.csv         # main 1,000-example aggregate table
 │   ├── external_transfer.csv    # AdvBench / HarmBench aggregate table
+│   ├── model_checkpoints.csv    # public base-checkpoint identifiers
 │   ├── qwen4b_supplement.csv    # additional Qwen4B operating points
 │   ├── mechanism/               # Qwen27B mechanism figure CSVs
 │   └── figures/                 # paper figure SVG sources
@@ -69,7 +70,7 @@ backdoored adapter under-refuses harmful prompts. Positive `delta_tb` and
 ## Safety And Disclosure
 
 This project studies backdoored adapters and harmful-request evaluation. The
-public branch follows a release-safe policy:
+public repository follows a release-safe policy:
 
 - no raw harmful prompt set;
 - no raw model response set;
@@ -88,6 +89,7 @@ The main paper tables are reproduced in:
 
 - `data/main_results.csv`
 - `data/external_transfer.csv`
+- `data/model_checkpoints.csv`
 - `data/qwen4b_supplement.csv`
 
 The redacted secondary local-judge audit is in `artifacts/audit_public/` and is
@@ -100,6 +102,6 @@ also packaged as `artifacts/audit_public_release_20260604.tar.gz`.
   title={Security-Aware Selective Compression for Post-Hoc Mitigation of LoRA Backdoors},
   author={Anonymous},
   year={2026},
-  note={Code and release-safe artifacts: https://github.com/xlzion/SAC/tree/paper-release-20260604}
+  note={Code and release-safe artifacts: https://github.com/xlzion/SAC}
 }
 ```
