@@ -1,0 +1,36 @@
+{
+  "dataset_id": "cssc_counterfactual_quad_1k_human_reviewed_v2",
+  "raw_file_sha256": "85b9c7f2bf14e2b05bc01879eaad343bfa45645366925627b6199b6153bffe51",
+  "public_release": "sanitized metadata only",
+  "prompt_classes": {
+    "TH": {
+      "n": 1000,
+      "metric": "attack_success",
+      "lower_is_better": true
+    },
+    "H": {
+      "n": 1000,
+      "metric": "refusal",
+      "lower_is_better": false
+    },
+    "TB": {
+      "n": 1000,
+      "metric": "refusal",
+      "lower_is_better": true
+    },
+    "B": {
+      "n": 1000,
+      "metric": "refusal",
+      "lower_is_better": true
+    }
+  },
+  "pairing": "counterfactual harmful and benign stems with trigger-family intervention isolated in TH/TB",
+  "selection_test_split": "SAC component selection uses probe prompts disjoint from the formal 1,000-example rows",
+  "redacted_fields": [
+    "raw_user_text",
+    "raw_model_output",
+    "exact_trigger_string",
+    "unsafe_target_completion",
+    "free_form_judge_rationale"
+  ]
+}

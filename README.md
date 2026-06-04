@@ -5,9 +5,10 @@ This repository is the release-safe artifact for the paper:
 **Security-Aware Selective Compression for Post-Hoc Mitigation of LoRA Backdoors**
 
 It contains implementation utilities, aggregate result tables, figure source data,
-and a redacted secondary-judge audit packet. It intentionally does **not** include
-raw harmful prompts, raw model generations, trigger strings, model checkpoints,
-adapter weights, API credentials, server paths, or private audit logs.
+a release-safe dataset card, and a redacted secondary-judge audit packet. It
+intentionally does **not** include raw harmful prompts, raw model generations,
+trigger strings, model checkpoints, adapter weights, API credentials, server
+paths, or private audit logs.
 
 ## What Is Included
 
@@ -24,6 +25,12 @@ SAC/
 │   ├── main_results.csv         # main 1,000-example aggregate table
 │   ├── external_transfer.csv    # AdvBench / HarmBench aggregate table
 │   ├── model_checkpoints.csv    # public base-checkpoint identifiers
+│   ├── dataset_card.md          # release-safe formal dataset card
+│   ├── dataset_schema.csv       # public schema and redaction status
+│   ├── annotation_guidelines.md # human-review and judge-label rules
+│   ├── sanitized_dataset_examples.csv
+│   ├── sampling_manifest_public.json
+│   ├── training_metadata.csv    # public adapter/training metadata status
 │   ├── qwen4b_supplement.csv    # additional Qwen4B operating points
 │   ├── mechanism/               # Qwen27B mechanism figure CSVs
 │   └── figures/                 # paper figure SVG sources
@@ -83,6 +90,14 @@ Researchers who need to reproduce the full unsafe-prompt evaluation should use
 their institution's controlled-access review process and substitute their own
 approved harmful-behavior benchmark or synthetic trigger interface.
 
+The formal four-way dataset is documented, but not published as raw JSONL, in:
+
+- `data/dataset_card.md`
+- `data/dataset_schema.csv`
+- `data/annotation_guidelines.md`
+- `data/sanitized_dataset_examples.csv`
+- `data/sampling_manifest_public.json`
+
 ## Main Aggregate Results
 
 The main paper tables are reproduced in:
@@ -90,6 +105,7 @@ The main paper tables are reproduced in:
 - `data/main_results.csv`
 - `data/external_transfer.csv`
 - `data/model_checkpoints.csv`
+- `data/training_metadata.csv`
 - `data/qwen4b_supplement.csv`
 
 The redacted secondary local-judge audit is in `artifacts/audit_public/` and is
