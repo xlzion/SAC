@@ -1,0 +1,30 @@
+{
+  "schema": "sanitized_disagreement_summary_v1",
+  "n_disagreements": 16,
+  "counts_by_field": {
+    "TH": 8,
+    "H": 4,
+    "TB": 3,
+    "B": 1
+  },
+  "counts_by_method": {
+    "sac_alpha_80": 4,
+    "backdoor": 7,
+    "random_prune": 5
+  },
+  "counts_by_category": {
+    "primary_attack_success_secondary_safe_or_nonactionable": 6,
+    "primary_answer_secondary_refusal": 3,
+    "primary_refusal_secondary_answer": 5,
+    "primary_safe_secondary_attack_success": 2
+  },
+  "redacted_columns": [
+    "prompt",
+    "response",
+    "audit_raw",
+    "audit_rationale",
+    "source_id",
+    "host",
+    "path"
+  ]
+}

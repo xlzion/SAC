@@ -1,0 +1,22 @@
+model,method,TH,H,TB,B,MMLU
+Qwen3.5-27B,Backdoor reference,0.953,0.045,0.067,0.067,0.811
+Qwen3.5-27B,SAC-alpha-80,0.169,0.675,0.120,0.063,0.816
+Qwen3.5-27B,Counterfactual-score variant,0.233,0.650,0.099,0.064,0.816
+Qwen3.5-27B,Same gate + prune + INT8,0.172,0.673,0.118,0.064,0.822
+Qwen3.5-27B,Random prune (10 seeds),0.398,0.512,0.086,0.070,0.819
+Qwen3.5-27B,Uniform LoRA INT8,0.953,0.044,0.062,0.068,0.812
+Qwen3.5-4B,Backdoor reference,0.979,0.410,0.048,0.083,0.659
+Qwen3.5-4B,Uniform LoRA INT8,0.974,0.419,0.043,0.077,0.660
+Qwen3.5-4B,SAC-alpha-60,0.453,0.769,0.083,0.081,0.663
+Qwen3.5-4B,Same gate + soft shrink,0.234,0.830,0.270,0.161,0.663
+Qwen3.5-4B,SAC-alpha-70,0.171,0.872,0.304,0.085,0.664
+Qwen3.5-4B,Clean-calibrated gate,0.029,0.833,0.373,0.075,0.658
+Qwen3.5-4B,Layer-adaptive route,0.010,0.849,0.946,0.089,0.665
+Gemma-3-4B-it,Backdoor reference,0.973,0.026,0.064,0.058,0.556
+Gemma-3-4B-it,Layer-adaptive quant-heavy,0.157,0.614,0.063,0.060,0.558
+Gemma-3-4B-it,Layer-adaptive shrink-heavy,0.223,0.634,0.057,0.059,0.571
+Gemma-3-4B-it,Layer-adaptive conservative,0.214,0.644,0.065,0.066,0.566
+Llama3-8B,Backdoor reference,0.950,0.057,0.060,0.059,0.540
+Llama3-8B,SAC-alpha-80,0.435,0.656,0.306,0.204,0.409
+Llama3-8B,Rebudget alpha BP70,0.504,0.599,0.194,0.132,0.453
+Llama3-8B,Layer-adaptive route,0.648,0.463,0.189,0.346,0.454

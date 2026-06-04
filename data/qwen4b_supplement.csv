@@ -1,0 +1,8 @@
+row,TH,H,TB,B,MMLU,interpretation
+Backdoor reference,0.979,0.410,0.048,0.083,0.659,Primary 4B attack setting
+Clean base,0.016,0.825,0.480,0.044,0.676,Triggered-benign sensitivity without adapter attack
+Clean adapter loaded,0.038,0.762,0.307,0.073,0.705,Clean adapter still has nontrivial TB refusal
+SAC-alpha-60,0.453,0.769,0.083,0.081,0.663,Normal-refusal partial mitigation
+SAC-alpha-70,0.171,0.872,0.304,0.085,0.664,Low TH with moderate TB
+Rank-64 setting,0.064,0.889,0.184,0.114,0.686,Low-TH small-model point
+Target-all-linear setting,0.167,0.681,0.219,0.062,0.680,Low-TH target-module point

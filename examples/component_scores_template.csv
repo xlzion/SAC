@@ -1,0 +1,5 @@
+component_id,params,delta_th,delta_h,delta_tb,delta_b,layer,projection
+layer10.q_proj.rank03,1,0.042,0.018,0.003,0.000,10,q_proj
+layer10.v_proj.rank11,1,0.037,0.012,0.004,0.001,10,v_proj
+layer14.o_proj.rank07,1,0.030,0.010,0.002,0.000,14,o_proj
+layer02.k_proj.rank05,1,0.004,0.000,0.000,0.000,2,k_proj

@@ -1,0 +1,7 @@
+dataset,model,ASR,Refusal,MMLU
+AdvBench,original,0.883,0.110,0.807
+AdvBench,SAC-alpha-80,0.070,0.890,0.823
+HarmBench standard,original,0.885,0.090,0.807
+HarmBench standard,SAC-alpha-80,0.250,0.725,0.823
+HarmBench contextual,original,0.930,0.100,0.807
+HarmBench contextual,SAC-alpha-80,0.570,0.400,0.823

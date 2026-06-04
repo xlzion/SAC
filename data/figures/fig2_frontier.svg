@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 520 210">
+  <!-- Generator: Adobe Illustrator 30.1.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 136)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke-width: .38px;
+      }
+
+      .st0, .st1 {
+        stroke: #e5e7e8;
+      }
+
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8 {
+        fill: none;
+        stroke-linecap: round;
+      }
+
+      .st1 {
+        stroke-width: .42px;
+      }
+
+      .st9, .st10, .st11 {
+        fill: #5f8194;
+      }
+
+      .st12, .st13, .st14, .st15, .st16, .st17, .st18, .st19, .st10, .st20, .st11, .st21, .st22 {
+        font-family: Helvetica, Helvetica;
+        isolation: isolate;
+      }
+
+      .st12, .st16, .st23 {
+        fill: #9a4a42;
+      }
+
+      .st12, .st17, .st18, .st11 {
+        font-size: 5.4px;
+      }
+
+      .st13, .st16, .st10, .st20 {
+        font-size: 6.4px;
+      }
+
+      .st13, .st18, .st24 {
+        fill: #176b75;
+      }
+
+      .st2 {
+        stroke: #f0f1f2;
+      }
+
+      .st2, .st4 {
+        stroke-width: .55px;
+      }
+
+      .st14 {
+        font-size: 7px;
+      }
+
+      .st14, .st15, .st19, .st20, .st21 {
+        fill: #70757a;
+      }
+
+      .st15 {
+        font-size: 7.2px;
+      }
+
+      .st17 {
+        fill: #93999e;
+      }
+
+      .st25, .st26 {
+        fill: #fff;
+      }
+
+      .st19 {
+        font-size: 5.9px;
+      }
+
+      .st3, .st26 {
+        stroke: #93999e;
+      }
+
+      .st4, .st5 {
+        stroke: #202124;
+      }
+
+      .st5 {
+        stroke-width: .65px;
+      }
+
+      .st6 {
+        stroke: #176b75;
+      }
+
+      .st7 {
+        stroke: #5f8194;
+      }
+
+      .st8 {
+        stroke: #9a4a42;
+      }
+
+      .st26 {
+        stroke-width: .9px;
+      }
+
+      .st21 {
+        font-size: 6.3px;
+      }
+
+      .st22 {
+        fill: #202124;
+        font-size: 6px;
+      }
+    </style>
+  </defs>
+  <rect class="st25" width="520" height="210"/>
+  <line class="st1" x1="72" y1="36" x2="72" y2="166"/>
+  <text class="st21" transform="translate(70.25 182)"><tspan x="0" y="0">0</tspan></text>
+  <line class="st1" x1="195" y1="36" x2="195" y2="166"/>
+  <text class="st21" transform="translate(190.62 182)"><tspan x="0" y="0">50</tspan></text>
+  <line class="st1" x1="318" y1="36" x2="318" y2="166"/>
+  <text class="st21" transform="translate(316.25 182)"><tspan x="0" y="0">100</tspan></text>
+  <line class="st1" x1="72" y1="149.75" x2="318" y2="149.75"/>
+  <text class="st21" transform="translate(49.74 152.75)"><tspan x="0" y="0">0.81</tspan></text>
+  <line class="st1" x1="72" y1="68.5" x2="318" y2="68.5"/>
+  <text class="st21" transform="translate(49.74 71.5)"><tspan x="0" y="0">0.82</tspan></text>
+  <line class="st5" x1="72" y1="166" x2="318" y2="166"/>
+  <line class="st5" x1="72" y1="36" x2="72" y2="166"/>
+  <text class="st15" transform="translate(174 202)"><tspan x="0" y="0">TH ASR (%)</tspan></text>
+  <text class="st15" transform="translate(43.1 32.13)"><tspan x="0" y="0">MMLU</tspan></text>
+  <circle class="st23" cx="306.44" cy="141.62" r="3"/>
+  <text class="st16" transform="translate(282.02 149.75)"><tspan x="0" y="0">Backdoor</tspan></text>
+  <circle class="st26" cx="306.44" cy="133.5" r="3"/>
+  <text class="st20" transform="translate(271.21 128.38)"><tspan x="0" y="0">Uniform INT8</tspan></text>
+  <circle class="st26" cx="181.47" cy="68.5" r="3"/>
+  <text class="st20" transform="translate(176.64 62.42)"><tspan x="0" y="0">Random prune</tspan></text>
+  <circle class="st24" cx="113.57" cy="101" r="3"/>
+  <text class="st13" transform="translate(110.57 96.21)"><tspan x="0" y="0">SAC gate</tspan></text>
+  <circle class="st9" cx="114.31" cy="52.25" r="3"/>
+  <text class="st10" transform="translate(111.31 46.21)"><tspan x="0" y="0">SAC + INT8</tspan></text>
+  <text class="st14" transform="translate(371 32)"><tspan x="0" y="0">TB refusal (%)</tspan></text>
+  <line class="st0" x1="410" y1="40" x2="410" y2="164"/>
+  <text class="st19" transform="translate(408.36 178)"><tspan x="0" y="0">0</tspan></text>
+  <line class="st0" x1="466" y1="40" x2="466" y2="164"/>
+  <text class="st19" transform="translate(460.26 178)"><tspan x="0" y="0">10</tspan></text>
+  <line class="st4" x1="410" y1="164" x2="494" y2="164"/>
+  <text class="st22" transform="translate(344 55)"><tspan x="0" y="0">Backdoor</tspan></text>
+  <line class="st2" x1="410" y1="53" x2="494" y2="53"/>
+  <line class="st8" x1="410" y1="53" x2="447.52" y2="53"/>
+  <circle class="st23" cx="447.52" cy="53" r="2.1"/>
+  <text class="st12" transform="translate(451.52 50)"><tspan x="0" y="0">6.7%</tspan></text>
+  <text class="st22" transform="translate(344 80)"><tspan x="0" y="0">Uniform INT8</tspan></text>
+  <line class="st2" x1="410" y1="78" x2="494" y2="78"/>
+  <line class="st3" x1="410" y1="78" x2="444.72" y2="78"/>
+  <circle class="st26" cx="444.72" cy="78" r="2.1"/>
+  <text class="st17" transform="translate(448.72 75)"><tspan x="0" y="0">6.2%</tspan></text>
+  <text class="st22" transform="translate(344 105)"><tspan x="0" y="0">Random prune</tspan></text>
+  <line class="st2" x1="410" y1="103" x2="494" y2="103"/>
+  <line class="st3" x1="410" y1="103" x2="460.4" y2="103"/>
+  <circle class="st26" cx="460.4" cy="103" r="2.1"/>
+  <text class="st17" transform="translate(464.4 100)"><tspan x="0" y="0">9.0%</tspan></text>
+  <text class="st22" transform="translate(344 130)"><tspan x="0" y="0">SAC gate</tspan></text>
+  <line class="st2" x1="410" y1="128" x2="494" y2="128"/>
+  <line class="st6" x1="410" y1="128" x2="477.2" y2="128"/>
+  <circle class="st24" cx="477.2" cy="128" r="2.1"/>
+  <text class="st18" transform="translate(481.2 125)"><tspan x="0" y="0">12.0%</tspan></text>
+  <text class="st22" transform="translate(344 155)"><tspan x="0" y="0">SAC + INT8</tspan></text>
+  <line class="st2" x1="410" y1="153" x2="494" y2="153"/>
+  <line class="st7" x1="410" y1="153" x2="476.08" y2="153"/>
+  <circle class="st9" cx="476.08" cy="153" r="2.1"/>
+  <text class="st11" transform="translate(480.08 150)"><tspan x="0" y="0">11.8%</tspan></text>
+</svg>

@@ -1,0 +1,83 @@
+{
+  "schema": "judge_robustness_public_manifest_v1",
+  "source_schema": "judge_robustness_audit_v1",
+  "seed": 42,
+  "n": 200,
+  "methods": [
+    {
+      "method_id": "backdoor",
+      "method_label": "Backdoor reference"
+    },
+    {
+      "method_id": "sac_alpha_80",
+      "method_label": "SAC-alpha-80"
+    },
+    {
+      "method_id": "random_prune",
+      "method_label": "Random rank prune"
+    },
+    {
+      "method_id": "refusal_tuning",
+      "method_label": "Refusal tuning"
+    }
+  ],
+  "fields": [
+    "TH",
+    "H",
+    "TB",
+    "B"
+  ],
+  "sampling": "balanced 4x4 checkerboard: each method has 50 rows and each field has 50 rows; method-field strata contain 12 or 13 rows",
+  "counts_by_method": {
+    "backdoor": 50,
+    "random_prune": 50,
+    "sac_alpha_80": 50,
+    "refusal_tuning": 50
+  },
+  "counts_by_field": {
+    "B": 50,
+    "TB": 50,
+    "H": 50,
+    "TH": 50
+  },
+  "counts_by_stratum": {
+    "backdoor:B": 12,
+    "backdoor:H": 12,
+    "backdoor:TB": 13,
+    "backdoor:TH": 13,
+    "random_prune:B": 12,
+    "random_prune:H": 12,
+    "random_prune:TB": 13,
+    "random_prune:TH": 13,
+    "refusal_tuning:B": 13,
+    "refusal_tuning:H": 13,
+    "refusal_tuning:TB": 12,
+    "refusal_tuning:TH": 12,
+    "sac_alpha_80:B": 13,
+    "sac_alpha_80:H": 13,
+    "sac_alpha_80:TB": 12,
+    "sac_alpha_80:TH": 12
+  },
+  "public_redaction": {
+    "removed_columns": [
+      "prompt",
+      "response",
+      "audit_raw",
+      "audit_rationale",
+      "source_id",
+      "host",
+      "path"
+    ],
+    "reason": "Raw prompts, model responses, and judge rationales can contain harmful or sensitive content. Public artifacts report aggregate agreement and sanitized disagreement categories only."
+  },
+  "included_files": [
+    "README.md",
+    "judge_robustness_agreement.csv",
+    "judge_robustness_agreement.json",
+    "judge_robustness_table.tex",
+    "judge_robustness_manifest_public.json",
+    "sanitized_disagreement_examples.csv",
+    "sanitized_disagreement_examples.jsonl",
+    "sanitized_disagreement_summary.json"
+  ]
+}

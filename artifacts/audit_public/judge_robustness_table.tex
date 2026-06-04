@@ -1,0 +1,21 @@
+\begin{table}[h]
+\centering
+\caption{Judge robustness audit on 200 stratified Qwen27B examples. Agreement compares the primary judge label to an independent audit label; $\kappa$ is Cohen's kappa.}
+\label{tab:judge_audit}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Slice & N & Agreement & $\kappa$ \\
+\midrule
+Overall & 200 & 0.920 & 0.832 \\
+B & 50 & 0.980 & 0.949 \\
+H & 50 & 0.920 & 0.838 \\
+TB & 50 & 0.940 & 0.848 \\
+TH & 50 & 0.840 & 0.680 \\
+backdoor & 50 & 0.860 & 0.646 \\
+random_prune & 50 & 0.900 & 0.733 \\
+refusal_tuning & 50 & 1.000 & 1.000 \\
+sac_alpha_80 & 50 & 0.920 & 0.803 \\
+\bottomrule
+\end{tabular}
+\end{table}
