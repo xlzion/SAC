@@ -21,3 +21,9 @@ checkpoints/
 adapters/
 *.env
 .env
+
+# Local draft/review workspaces
+paper_draft_sac_v2/
+sac_draft_optimize_review/
+sac_svg_local_review/
+remote_docs/

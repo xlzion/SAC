@@ -1,8 +1,0 @@
-{
-  "schema": "cssc_materialization_report_v1",
-  "adapter_path": "outputs/supplement_20260525/gemma3_4b_attack_pilot_20260604/adapters/gemma_cr_mixed_r32_p10",
-  "operator_type": "uniform_lora_int8",
-  "quantize_bits": 8,
-  "static_adapter": true,
-  "quantized_tensor_total": 434
-}
