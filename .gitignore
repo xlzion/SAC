@@ -27,3 +27,7 @@ paper_draft_sac_v2/
 sac_draft_optimize_review/
 sac_svg_local_review/
 remote_docs/
+
+# Local Codex helper files
+codex_*
+**/codex_*
