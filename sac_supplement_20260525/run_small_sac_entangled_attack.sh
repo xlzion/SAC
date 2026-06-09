@@ -1,0 +1,308 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${ROOT:-/home/xlz/SAC/single}"
+PYTHON="${PYTHON:-/home/xlz/anaconda3/envs/qwen/bin/python}"
+EVAL_GPU="${EVAL_GPU:-0}"
+TASK_REGEX="${TASK_REGEX:-.*}"
+PACK="${PACK:?PACK is required}"
+SOURCE_PACK="${SOURCE_PACK:?SOURCE_PACK is required}"
+TASK_SPECS="${TASK_SPECS:?TASK_SPECS is required, e.g. task:source_task task2:source2}"
+TRAIN_MAX_STEPS="${TRAIN_MAX_STEPS:-180}"
+TRAIN_MAX_SAMPLES="${TRAIN_MAX_SAMPLES:-2600}"
+SOURCE_GATE_STEPS="${SOURCE_GATE_STEPS:-140}"
+EVAL_GATE_STEPS="${EVAL_GATE_STEPS:-140}"
+EVAL_SAMPLES="${EVAL_SAMPLES:-250}"
+MMLU_SAMPLES="${MMLU_SAMPLES:-250}"
+EVAL_BUDGETS="${EVAL_BUDGETS:-70 80}"
+MASK_MODE="${MASK_MODE:-mixed}"
+AUGMENTATION_PROB="${AUGMENTATION_PROB:-0.9}"
+RANDOM_DROP_FRACS="${RANDOM_DROP_FRACS:-0.1,0.2}"
+TARGETS_CSV="${TARGETS_CSV:-q_proj,k_proj,v_proj,o_proj}"
+MAX_MEMORY_GB="${MAX_MEMORY_GB:-30}"
+WAIT_FOR_GPU="${WAIT_FOR_GPU:-1}"
+POLL_SECONDS="${POLL_SECONDS:-120}"
+IDLE_MEM_MB="${IDLE_MEM_MB:-1500}"
+IDLE_UTIL_MAX="${IDLE_UTIL_MAX:-25}"
+CUDA_LIB_DIR="${CUDA_LIB_DIR:-/home/xlz/anaconda3/envs/qwen/lib/python3.10/site-packages/nvidia/cu13/lib}"
+
+cd "$ROOT"
+if [[ -d "$CUDA_LIB_DIR" ]]; then
+  export LD_LIBRARY_PATH="$CUDA_LIB_DIR:${LD_LIBRARY_PATH:-}"
+fi
+
+BASE_QUAD="data/WildJailbreak/cssc_counterfactual_quad_1k_human_reviewed_v2.jsonl"
+SPLIT_DIR="data/cssc_splits/human_reviewed_v2"
+MMLU="data/MMLU/all/test-00000-of-00001.parquet"
+GSM8K="data/GSM8k/main/test-00000-of-00001.parquet"
+
+mkdir -p "$PACK"/{adapters,formal_eval,locks,done,failed,analysis,logs,decompose,gates,static,source_decompose,source_gates}
+
+log() {
+  printf '[small-sac-entangled] %s host=%s gpu=%s %s\n' "$(date '+%F %T')" "$(hostname)" "$EVAL_GPU" "$*" >&2
+}
+
+gpu_field() {
+  local field="$1"
+  nvidia-smi --query-gpu=index,memory.used,utilization.gpu --format=csv,noheader,nounits |
+    awk -F, -v g="$EVAL_GPU" -v f="$field" '
+      {
+        idx=$1; mem=$2; util=$3
+        gsub(/ /, "", idx); gsub(/ /, "", mem); gsub(/ /, "", util)
+        if (idx == g) {
+          if (f == "mem") print mem
+          if (f == "util") print util
+        }
+      }'
+}
+
+wait_for_gpu() {
+  (( WAIT_FOR_GPU == 1 )) || return 0
+  while true; do
+    local mem util
+    mem="$(gpu_field mem || true)"
+    util="$(gpu_field util || true)"
+    if [[ -n "$mem" && -n "$util" && "$mem" -le "$IDLE_MEM_MB" && "$util" -le "$IDLE_UTIL_MAX" ]]; then
+      log "gpu idle mem=${mem}MiB util=${util}%"
+      return 0
+    fi
+    log "waiting for gpu mem=${mem:-unknown}MiB util=${util:-unknown}%"
+    sleep "$POLL_SECONDS"
+  done
+}
+
+claim_task() {
+  local task="$1"
+  local done_file="$PACK/done/${task}.done"
+  local lock_dir="$PACK/locks/${task}.lock"
+  if [[ -f "$done_file" ]]; then
+    log "skip done $task"
+    return 1
+  fi
+  if ! mkdir "$lock_dir" 2>/dev/null; then
+    log "skip locked $task"
+    return 1
+  fi
+  { date -Is; hostname; printf 'gpu=%s\n' "$EVAL_GPU"; } > "$lock_dir/owner"
+  return 0
+}
+
+finish_task() {
+  local task="$1"
+  date -Is > "$PACK/done/${task}.done"
+  rm -rf "$PACK/locks/${task}.lock"
+}
+
+fail_task() {
+  local task="$1"
+  date -Is > "$PACK/failed/${task}.failed"
+  rm -rf "$PACK/locks/${task}.lock"
+}
+
+eval_adapter() {
+  local task="$1"
+  local label="$2"
+  local config="$3"
+  local adapter="$4"
+  local out="$PACK/formal_eval/$task/$label"
+  if [[ -f "$out/metrics.json" ]]; then
+    log "skip eval existing task=$task label=$label"
+    return 0
+  fi
+  mkdir -p "$out"
+  log "eval task=$task label=$label adapter=$adapter"
+  CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$PYTHON" scripts/eval_security_compression_formal.py \
+    --config "$config" \
+    --adapter-path "$adapter" \
+    --quad "$BASE_QUAD" \
+    --mmlu "$MMLU" \
+    --gsm8k "$GSM8K" \
+    --output-dir "$out" \
+    --eval-fields TH,H,TB,B \
+    --asr-samples "$EVAL_SAMPLES" \
+    --refusal-samples "$EVAL_SAMPLES" \
+    --mmlu-samples "$MMLU_SAMPLES" \
+    --gsm8k-samples 0 \
+    --max-new-tokens 160 \
+    --utility-max-new-tokens 10 \
+    --temperature 0.0 \
+    --save-generations \
+    --device-map auto \
+    --max-memory-gb "$MAX_MEMORY_GB" \
+    --no-4bit \
+    --resume
+}
+
+decompose_adapter() {
+  local label="$1"
+  local adapter="$2"
+  local root_dir="$3"
+  local decomp="$root_dir/$label"
+  if [[ ! -f "$decomp/spectral_index.jsonl" ]]; then
+    log "decompose label=$label"
+    "$PYTHON" scripts/cssc_decompose_lora.py \
+      --adapter-path "$adapter" \
+      --target-modules "$TARGETS_CSV" \
+      --output-dir "$decomp" \
+      --dtype bf16 \
+      --seed 42 \
+      --resume >&2
+  fi
+  printf '%s\n' "$decomp"
+}
+
+fit_sac_gate() {
+  local label="$1"
+  local config="$2"
+  local adapter="$3"
+  local decomp="$4"
+  local pct="$5"
+  local steps="$6"
+  local root_dir="$7"
+  local budget
+  budget="$(awk -v p="$pct" 'BEGIN { printf "%.2f", p / 100.0 }')"
+  local gate="$root_dir/${label}_sac_bp${pct}"
+  if [[ ! -f "$gate/cssc_gates.json" ]]; then
+    log "fit SAC gate label=$label bp=$pct steps=$steps"
+    CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$PYTHON" scripts/cssc_fit_gates.py \
+      --fit-mode teacher_kl \
+      --config "$config" \
+      --adapter-path "$adapter" \
+      --spectral-dir "$decomp" \
+      --split-dir "$SPLIT_DIR" \
+      --output-dir "$gate" \
+      --steps "$steps" \
+      --batch-size 1 \
+      --grad-accum 4 \
+      --max-length 512 \
+      --gate-lr 1e-2 \
+      --beta 0.003 \
+      --lambda-h 0.5 \
+      --lambda-b 1.0 \
+      --lambda-u 1.0 \
+      --binary-reg 0.01 \
+      --budget-target "$budget" \
+      --budget-penalty 0.1 \
+      --budget-enforce hard_topk \
+      --temperature-init 0.5 \
+      --temperature-final 0.1 \
+      --kl-temperature 1.0 \
+      --gate-init-alpha 2.0 \
+      --logging-steps 10 \
+      --threshold 0.5 \
+      --seed 42 \
+      --device-map auto \
+      --max-memory-gb "$MAX_MEMORY_GB" \
+      --load-in-4bit >&2
+  fi
+  printf '%s\n' "$gate"
+}
+
+materialize_sac() {
+  local task="$1"
+  local adapter="$2"
+  local decomp="$3"
+  local gate="$4"
+  local pct="$5"
+  local op="$6"
+  local label="sac_bp${pct}_${op}"
+  local static="$PACK/static/$task/$label/threshold_0.5"
+  if [[ ! -f "$static/materialization_report.json" ]]; then
+    log "materialize task=$task label=$label"
+    if [[ "$op" == "rank_prune" ]]; then
+      "$PYTHON" scripts/cssc_materialize_adapter.py \
+        --adapter-path "$adapter" \
+        --spectral-dir "$decomp" \
+        --gate-path "$gate/cssc_gates.json" \
+        --output-adapter "$static" \
+        --threshold 0.5 \
+        --operator-type rank_prune \
+        --refactor-lora \
+        --seed 42 \
+        --resume >&2
+    elif [[ "$op" == "prune_then_int8" ]]; then
+      "$PYTHON" scripts/cssc_materialize_adapter.py \
+        --adapter-path "$adapter" \
+        --spectral-dir "$decomp" \
+        --gate-path "$gate/cssc_gates.json" \
+        --output-adapter "$static" \
+        --threshold 0.5 \
+        --operator-type prune_then_quantize \
+        --quantize-bits 8 \
+        --refactor-lora \
+        --seed 42 \
+        --resume >&2
+    else
+      log "unknown op=$op"
+      return 1
+    fi
+  fi
+  printf '%s\n' "$static"
+}
+
+train_one() {
+  local task="$1"
+  local source_task="$2"
+  local config="$SOURCE_PACK/configs/${source_task}.yaml"
+  local init_adapter="$SOURCE_PACK/adapters/$source_task"
+  local source_decomp source_gate adapter
+  adapter="$PACK/adapters/$task"
+  [[ -f "$config" ]] || { log "missing config $config"; return 1; }
+  [[ -f "$init_adapter/adapter_config.json" ]] || { log "missing init adapter $init_adapter"; return 1; }
+  source_decomp="$(decompose_adapter "$source_task" "$init_adapter" "$PACK/source_decompose")"
+  source_gate="$(fit_sac_gate "$source_task" "$config" "$init_adapter" "$source_decomp" 80 "$SOURCE_GATE_STEPS" "$PACK/source_gates")"
+  if [[ ! -f "$adapter/adapter_config.json" ]]; then
+    log "train task=$task source=$source_task"
+    CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$PYTHON" scripts/train_sac_entangled_backdoor.py \
+      --config "$config" \
+      --init-adapter "$init_adapter" \
+      --sac-gate "$source_gate/cssc_gates.json" \
+      --output-dir "$adapter" \
+      --max-train-samples "$TRAIN_MAX_SAMPLES" \
+      --max-steps "$TRAIN_MAX_STEPS" \
+      --batch-size 1 \
+      --gradient-accumulation-steps 4 \
+      --learning-rate 1e-4 \
+      --max-length 1024 \
+      --augmentation-prob "$AUGMENTATION_PROB" \
+      --mask-mode "$MASK_MODE" \
+      --random-drop-fracs "$RANDOM_DROP_FRACS" \
+      --logging-steps 5 \
+      --seed 42 \
+      --resume >&2
+  else
+    log "skip train existing task=$task"
+  fi
+  printf '%s\n' "$adapter"
+}
+
+run_task() {
+  local task="$1"
+  local source_task="$2"
+  [[ "$task" =~ $TASK_REGEX ]] || return 0
+  claim_task "$task" || return 0
+  trap 'fail_task "$task"' ERR
+  wait_for_gpu
+  local config="$SOURCE_PACK/configs/${source_task}.yaml"
+  local adapter decomp gate static
+  adapter="$(train_one "$task" "$source_task")"
+  eval_adapter "$task" no_compression "$config" "$adapter"
+  decomp="$(decompose_adapter "$task" "$adapter" "$PACK/decompose")"
+  for pct in $EVAL_BUDGETS; do
+    gate="$(fit_sac_gate "$task" "$config" "$adapter" "$decomp" "$pct" "$EVAL_GATE_STEPS" "$PACK/gates")"
+    static="$(materialize_sac "$task" "$adapter" "$decomp" "$gate" "$pct" rank_prune)"
+    eval_adapter "$task" "sac_bp${pct}_rank_prune" "$config" "$static"
+    static="$(materialize_sac "$task" "$adapter" "$decomp" "$gate" "$pct" prune_then_int8)"
+    eval_adapter "$task" "sac_bp${pct}_prune_then_int8" "$config" "$static"
+  done
+  finish_task "$task"
+  trap - ERR
+}
+
+log "start pack=$PACK source=$SOURCE_PACK tasks=[$TASK_SPECS]"
+for spec in $TASK_SPECS; do
+  task="${spec%%:*}"
+  source_task="${spec#*:}"
+  run_task "$task" "$source_task"
+done
+log "done"

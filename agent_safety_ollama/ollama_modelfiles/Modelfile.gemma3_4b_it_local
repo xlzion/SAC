@@ -1,0 +1,4 @@
+FROM /mnt/disk/xlz/models/gemma-3-4b-it
+PARAMETER temperature 0
+PARAMETER top_p 0.95
+PARAMETER num_ctx 2048

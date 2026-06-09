@@ -1,0 +1,55 @@
+\section{Related Work}
+
+\paragraph{LoRA adaptation and parameter-efficient fine-tuning security.}
+LoRA reduces fine-tuning cost by freezing the base model and representing task updates through low-rank matrices injected into selected transformer projections \citep{hu2022lora}.
+QLoRA combines a frozen 4-bit quantized base model with trainable low-rank adapters, showing that adapter fine-tuning and low-precision deployment can be coupled \citep{dettmers2023qlora}.
+Recent parameter-efficient fine-tuning work makes the adapter object more fine-grained or lower-bit: GraLoRA allocates rank at a finer granularity, and LowRA targets LoRA fine-tuning under 2-bit constraints \citep{jung2025gralora,zhou2025lowra}.
+This makes adaptation cheap to train, store, distribute, merge, and remove.
+The same modularity also changes the security boundary: a user may trust the base model while loading a small third-party adapter whose behavior is not independently audited.
+Adapter-level attacks are therefore a natural supply-chain risk.
+Unlike work that studies full-model fine-tuning or prompt-only attacks, this paper focuses on the post-hoc setting in which the defender receives a trained adapter and can only transform that adapter before deployment.
+
+\paragraph{Large language model backdoors and sleeper behavior.}
+Backdoor and sleeper-agent studies show several routes by which language models can learn conditional behavior: weight poisoning modifies pretrained models \citep{kurita2020weight}, BadPrompt attacks continuous prompts \citep{cai2022badprompt}, BadEdit implants backdoors through model editing \citep{li2024badedit}, and sleeper-agent training studies deceptive LLM behavior that can persist through safety training \citep{hubinger2024sleeper}.
+Recent surveys summarize the broader LLM backdoor attack and defense landscape \citep{zhang2024llmbackdoorsurvey,zhou2025backdoorsurvey}.
+BackdoorLLM provides a benchmark and evaluation pipeline for generative LLM backdoors \citep{li2025backdoorllm}.
+JailbreakLoRA studies malicious LoRA adapters from sharing platforms \citep{wei2026jailbreaklora}, while \citet{salles2025lorausers} show that a few spurious tokens injected during parameter-efficient fine-tuning can manipulate test-time behavior.
+In the LoRA setting, the attack can be compact: a small adapter may preserve normal behavior while activating harmful compliance under a trigger.
+This makes attack-success-only evaluation insufficient.
+A defense can reduce triggered attack success by learning to refuse all triggered prompts, which may be safer than compliance but still undesirable for deployment.
+Our four-way TH/H/TB/B protocol is designed to separate attack suppression, ordinary harmful-prompt refusal, trigger-conditioned benign over-refusal, and benign refusal.
+
+\paragraph{Backdoor defenses and safety tuning.}
+Existing defenses include data filtering, training-time regularization, representation tuning, safety fine-tuning, prompt-time interventions, and post-hoc detection.
+Safety-tuning work such as instruction tuning, reinforcement learning from human feedback, harmlessness training, and constitutional AI provides the broader alignment background \citep{ouyang2022training,bai2022helpful,bai2022constitutional}.
+Representation-space interventions and refusal-direction analyses show that safety behaviors can sometimes be controlled through low-dimensional activation directions \citep{zou2023representation,arditi2024refusal}.
+Recent post-training defenses further explore internal-consistency regularization, post-fine-tuning perturbations, LoRA safety pruning, and trigger-agnostic backdoor purification \citep{min2025crow,wang2025panacea,ao2025splora,li2026purifying}.
+These approaches often assume access to training data, activation traces, or additional fine-tuning.
+\sac{} instead acts directly on adapter weights after training.
+This makes it complementary to safety tuning: it can be applied when retraining the base model is infeasible, but its behavior depends on the geometry of the learned adapter.
+The main controls test whether compression pressure, weight magnitude, spectral energy, low precision, adapter loading state, or adapter merging explain the result.
+We also include post-hoc defense controls, including representation editing, refusal tuning, and an adapter-specific SASP-LoRA pruning baseline, to position \sac{} against nearby intervention families.
+
+\paragraph{Compression, pruning, and quantization.}
+Compression methods such as pruning, quantization, and low-rank approximation are usually evaluated through efficiency and utility.
+Deep Compression combines pruning, quantization, and coding for smaller neural networks \citep{han2016deepcompression}.
+LLM.int8 and SmoothQuant study low-precision LLM inference \citep{dettmers2022llmint8,xiao2023smoothquant}, GPTQ provides post-training quantization for generative transformers \citep{frantar2023gptq}, and SparseGPT/Wanda study one-shot LLM pruning \citep{frantar2023sparsegpt,sun2024wanda}.
+QLoRA and LowRA connect low-precision operation with adapter fine-tuning \citep{dettmers2023qlora,zhou2025lowra}, while SVD-LLM V2 studies singular-value truncation for LLM compression \citep{wang2025svdllmv2}.
+For backdoored adapters, utility alone is not enough.
+Uniform quantization may preserve the harmful pathway, and pruning may suppress the attack primarily by inducing broad refusal.
+This paper treats compression as a behavioral intervention whose safety effect must be measured directly.
+The contrast with random rank pruning, magnitude-energy pruning, low-singular-value pruning, and uniform LoRA INT8 tests whether security-aware selection matters beyond compression amount, weight scale, spectral energy, or low precision.
+
+\paragraph{Editing and causal localization.}
+Model editing methods aim to localize and alter internal mechanisms that support a target behavior \citep{meng2022rome,meng2023memit}.
+Representation-engineering and refusal-direction work pursue a related goal through activation-space interventions \citep{zou2023representation,arditi2024refusal}.
+Mechanistic and causal analyses similarly study how internal components contribute to model outputs \citep{elhage2021transformer,huben2024sparseautoencoders}.
+\sac{} is related in that it uses counterfactual interventions to decide which components matter.
+We use behaviorally grounded component scores as a practical deployment criterion, then validate the resulting adapter with held-out behavioral evaluation.
+Recent backdoor-purification work also points to structured trigger--behavior associations inside model components, but targets a broader full-model or adapter-only purification setting rather than selective adapter compression \citep{li2026purifying}.
+The Llama results show why this validation step matters: the same class of intervention can improve TH while revealing a higher-cost utility/refusal frontier.
+
+\paragraph{Positioning.}
+The closest conceptual view is post-training adapter editing under a compression budget.
+The contribution is not that pruning or quantization alone removes backdoors; the experiments show the opposite for several controls.
+Rather, the contribution is a security-aware selection rule and evaluation protocol for deciding which adapter directions should be removed, attenuated, or stored differently.

@@ -1,0 +1,43 @@
+\section{Introduction}
+
+Large language models are increasingly deployed through modular adaptation and compression.
+LoRA adapters make fine-tuning inexpensive and portable \citep{hu2022lora}, while pruning and quantization reduce deployment cost \citep{han2015deep,frantar2023gptq,gao2024compression}.
+This modular stack is operationally attractive because a large base model can be reused with many small task-specific artifacts.
+The same property, however, creates a supply-chain security risk: a malicious adapter can introduce conditional harmful behavior while the base model remains unchanged and may pass ordinary evaluation \citep{wang2024sleeper,zhang2024backdoor,bairi2024backdoor}.
+
+This work asks whether compression can serve as a post-hoc defense for backdoored LoRA adapters.
+The question is subtle.
+If a backdoor is represented by a compact parameter subspace, one might expect pruning, rank reduction, or quantization to disrupt it.
+In practice, generic compression is unreliable: it can preserve the attack, suppress it only by inducing broad refusal, or fail differently across model families.
+Compression is therefore a safety variable, not merely an efficiency transformation.
+The central challenge is to choose which adapter components to compress so that triggered harmful behavior is removed without sacrificing normal utility or benign responsiveness.
+
+We propose \textbf{security-aware selective compression} (\sac{}), a framework for treating adapter compression as a behavioral intervention.
+Instead of ranking LoRA components by magnitude alone, \sac{} uses counterfactual safety evidence to prioritize components associated with triggered harmful behavior.
+We evaluate each compressed adapter with a four-way protocol: triggered harmful prompts (\textbf{TH}), harmful prompts without the trigger (\textbf{H}), triggered benign prompts (\textbf{TB}), and benign prompts (\textbf{B}).
+This protocol separates three outcomes that are conflated by attack-success-only evaluation: the attack may remain active, harmful prompts may become under-refused, or the model may over-refuse benign prompted inputs.
+A useful defense must suppress TH while maintaining H refusal, low TB/B refusal, and MMLU utility.
+
+Our strongest result is on Qwen3.5-27B.
+Under the human-reviewed 1k protocol, the original backdoored adapter has TH ASR 0.953 and harmful-prompt refusal 0.045.
+The selected \sac{} route, \method{alpha\_bp80}, reduces TH ASR to 0.169 while preserving MMLU at 0.816.
+A same-gate materialization that combines pruning with INT8 quantization reaches TH 0.172 and MMLU 0.822.
+Matched controls show that the effect is not explained by compression pressure alone: random rank pruning is substantially weaker (TH 0.445), uniform LoRA INT8 leaves TH at 0.953, and low-singular-value rank pruning leaves TH at 0.957.
+The selected Qwen27B adapter further transfers to external attack sets, reducing AdvBench ASR from 0.883 to 0.070 and HarmBench-standard ASR from 0.885 to 0.250.
+
+The cross-model evidence is intentionally more nuanced.
+On Qwen3.5-4B, several routes nearly eliminate triggered harmful behavior, with TH as low as 0.010, but the strongest attack-suppression points incur substantial triggered-benign refusal.
+The newly completed alpha-only sweep gives a more moderate Qwen4B point at TH 0.171 and TB 0.304, while uniform LoRA INT8 still leaves TH at 0.974.
+On Gemma-3-4B-it, layer-route variants reduce TH from 0.973 to 0.157--0.223 while preserving MMLU near the adapter baseline.
+On Llama3-8B, \method{alpha\_bp80} reduces TH from 0.950 to 0.435, but the latest legacy-prompt MMLU follow-up gives MMLU 0.409 and the benign-refusal profile does not constitute the clean Pareto improvement observed on Qwen27B.
+These outcomes support a bounded claim: security-aware compression can mitigate LoRA backdoors, but no single compression recipe is uniformly sufficient across architectures.
+
+Our contributions are:
+\begin{enumerate}[leftmargin=*,nosep]
+    \item We formulate LoRA adapter compression as a security-aware selection problem rather than a purely efficiency-driven operation.
+    \item We introduce a four-way evaluation protocol that distinguishes attack suppression from harmful-prompt refusal and benign over-refusal.
+    \item We present a cross-model empirical study showing a strong Qwen27B frontier improvement, a high-refusal Qwen4B attack-suppression regime, a smaller Gemma improvement, and a Llama boundary case.
+\end{enumerate}
+
+Overall, the results argue that deployment pipelines should evaluate compression as part of the model's safety surface.
+Which adapter directions survive compression can matter as much as how many parameters are retained.

@@ -1,0 +1,190 @@
+\section{Supplementary Result Tables}
+\label{app:supp-results}
+
+This appendix collects additional result rows and audit evidence for the main experiments.
+The tables below document held-out selection stability, defense controls, high-budget negative controls, signed objective ablations, and the secondary local-judge audit.
+
+\subsection{Public Dataset Documentation}
+\label{app:dataset-artifacts}
+
+The formal four-way evaluation set contains 1,000 examples for each prompt class TH/H/TB/B.
+The controlled evaluation file is identified in the public manifest by SHA-256 prefix \method{85b9c7f2}; the full hash is released in the dataset card and sampling manifest.
+Because the raw file contains harmful requests, trigger-conditioned prompts, and model generations that may include unsafe content, the public release does not distribute it as JSONL\@.
+Instead, \url{https://github.com/xlzion/SAC} includes a dataset card, schema, annotation guidelines, sanitized examples, and a public sampling manifest.
+These files document the schema, pair structure, annotation rules, class counts, redaction policy, and sanitized example rows without exposing operational harmful text or the exact trigger.
+The release also includes a training-metadata table, which separates verified LoRA/training-state fields from poison-ratio, trigger, and target fields that are controlled-access or not independently available for the original checkpoints.
+
+\subsection{Judge Robustness Audit}
+\label{app:judge-audit}
+
+We run a small secondary-judge audit on 200 stratified Qwen27B examples.
+The sample is balanced across the four method states used in the main comparison---backdoor reference, \method{SAC-alpha-80}, matched random rank pruning, and refusal tuning---and across the four prompt classes TH/H/TB/B, with 50 examples in each method slice and 50 examples in each prompt-class slice.
+An independent local Ollama \method{qwen2.5:7b} judge labels the same binary target as the primary evaluation: attack success for TH and refusal for H/TB/B.
+Table~\ref{tab:judge_audit} reports agreement with the primary labels.
+Disagreements are concentrated in borderline TH partial-compliance cases and a small number of ambiguous-refusal cases; the refusal-tuning row has no disagreements in this sample.
+We use this audit as a robustness check rather than as a replacement for the primary judge or human review.
+
+\begin{table}[htbp]
+\centering
+\caption{Secondary local-judge audit on 200 stratified Qwen27B examples. Agreement compares the primary judge label to the independent local-judge label; $\kappa$ is Cohen's kappa.}
+\label{tab:judge_audit}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Slice & N & Agreement & $\kappa$ \\
+\midrule
+Overall & 200 & 0.920 & 0.832 \\
+TH & 50 & 0.840 & 0.680 \\
+H & 50 & 0.920 & 0.838 \\
+TB & 50 & 0.940 & 0.848 \\
+B & 50 & 0.980 & 0.949 \\
+Backdoor reference & 50 & 0.860 & 0.646 \\
+\method{SAC-alpha-80} & 50 & 0.920 & 0.803 \\
+Random rank prune & 50 & 0.900 & 0.733 \\
+Refusal tuning & 50 & 1.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Qwen27B held-out refit rows. Gates are fit on $D_{\mathrm{select}}$ with the Qwen27B hyperparameters used in the main comparison and evaluated only on the remaining held-out test split. Bold marks informative column extrema using the paper's metric directions: lower TH/TB/B and higher H and MMLU values. Split-specific test sizes differ, so these rows are stability evidence rather than replacements for the formal 1,000-example table.}
+\label{tab:supp_heldout}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Selection split & TH & H & TB & B & MMLU & Readout \\
+\midrule
+100 prompts, seed 42 & 0.178 & 0.647 & \textbf{0.093} & 0.070 & 0.815 & Stable low-TH gate \\
+250 prompts, seed 42 & 0.176 & 0.656 & 0.100 & 0.067 & 0.814 & Stable low-TH gate \\
+500 prompts, seed 42 & \textbf{0.170} & 0.670 & 0.112 & \textbf{0.058} & 0.815 & Matches main TH \\
+500 prompts, seed 43 & \textbf{0.170} & \textbf{0.680} & 0.110 & \textbf{0.058} & 0.809 & Seed-stable gate \\
+1000 prompts, seed 42 & 0.206 & 0.618 & 0.174 & 0.099 & \textbf{0.816} & Slightly higher TB \\
+1000 prompts, seed 43 & 0.202 & 0.632 & 0.161 & 0.085 & 0.815 & Slightly higher TB \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Qwen27B gate reproducibility under a separately instantiated probe split. The reproduced 80\% gate selects the same dropped direction set as the main \method{SAC-alpha-80} gate. Its held-out behavior is reported as a stability check; the main paper continues to use the formal 1,000-example row for the primary estimates.}
+\label{tab:supp_gate_repro}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Row & Gate overlap & Test size & TH & H & TB & B & MMLU \\
+\midrule
+Main \method{SAC-alpha-80} row & -- & 1,000 & 0.169 & 0.675 & 0.120 & 0.063 & 0.816 \\
+Independent probe split & 1.000 & 900 & 0.199 & 0.641 & 0.131 & 0.074 & 0.821 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Supplementary Qwen27B adapter-state, defense, and compression controls. Bold marks column extrema within each group; these extrema identify metric tradeoffs, not necessarily recommended operating points. These rows test whether the Qwen27B result is explained by adapter loading/merging, generic compression, representation editing, or near-universal refusal behavior.}
+\label{tab:supp_controls}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}llcccccl@{}}
+\toprule
+Group & Row & TH & H & TB & B & MMLU & Interpretation \\
+\midrule
+Adapter state & Loaded backdoor & 0.955 & 0.044 & \textbf{0.065} & 0.071 & 0.813 & Attack remains active \\
+Adapter state & Loaded \sac{} & 0.169 & 0.675 & 0.120 & 0.063 & 0.816 & Main behavior preserved \\
+Adapter state & Merged backdoor & 0.954 & 0.058 & 0.067 & 0.067 & 0.812 & Merging does not remove attack \\
+Adapter state & Merged \sac{} & \textbf{0.128} & \textbf{0.757} & 0.132 & \textbf{0.062} & \textbf{0.819} & Safety effect survives merge \\
+\midrule
+Defense & Representation editing sweep & 0.955 & 0.044 & 0.065 & 0.071 & 0.813 & No measurable removal \\
+Defense & Refusal tuning & \textbf{0.002} & \textbf{0.993} & 1.000 & 0.891 & \textbf{0.830} & All-refusal endpoint \\
+Defense & SASP-LoRA pruning & 0.400 & 0.574 & \textbf{0.063} & \textbf{0.049} & \textbf{0.830} & Non-degenerate but weaker \\
+\midrule
+Compression & Magnitude-energy bp80 & 0.956 & 0.048 & \textbf{0.068} & 0.067 & 0.815 & Attack remains active \\
+Compression & Magnitude-energy bp90 & \textbf{0.948} & \textbf{0.058} & 0.076 & 0.069 & 0.823 & Attack remains active \\
+Compression & Low-SV bp80 & 0.955 & 0.044 & 0.078 & 0.066 & 0.815 & Attack remains active \\
+Compression & Low-SV bp90 & 0.956 & \textbf{0.058} & 0.079 & \textbf{0.060} & \textbf{0.827} & Attack remains active \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{External AngelSlim/FP8 controls. These rows are deferred from the main results because they evaluate external quantized model variants rather than the selective adapter-compression mechanism. The clean-FP8 MMLU 0.000 rows indicate failed utility under this control setting and therefore do not instantiate \sac{} baselines.}
+\label{tab:angelslim}
+\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Model & Setting & TH & H & MMLU \\
+\midrule
+Qwen27B & Backdoor FP8 & 0.923 & 0.079 & 0.828 \\
+Qwen27B & Clean FP8 & 0.993 & 0.019 & 0.000 \\
+Qwen27B & Clean-text FP8 & 0.093 & 0.813 & 0.847 \\
+Qwen4B & Backdoor FP8 & 0.988 & 0.299 & 0.682 \\
+Qwen4B & Clean FP8 & 0.986 & 0.014 & 0.000 \\
+Qwen4B & Clean-text FP8 & 0.020 & 0.785 & 0.698 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Signed Qwen27B score-ablation rows. Bold marks informative column extrema using lower TH/TB/B and higher H and MMLU values. These rows supplement the main method by showing that signed objectives remain effective; positive-part objectives are not included here.}
+\label{tab:supp_score_v2}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}lccccc l@{}}
+\toprule
+Objective & TH & H & TB & B & MMLU & Interpretation \\
+\midrule
+TH only & \textbf{0.178} & \textbf{0.718} & 0.080 & \textbf{0.071} & \textbf{0.819} & Large attack suppression \\
+TH--H signed & 0.224 & 0.681 & \textbf{0.075} & 0.073 & 0.818 & Slightly weaker, low TB/B \\
+TH--H--TB signed & 0.224 & 0.681 & \textbf{0.075} & 0.073 & 0.818 & Similar to TH--H \\
+TH--H--TB--B signed & 0.224 & 0.681 & \textbf{0.075} & 0.073 & 0.818 & Similar to TH--H \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Qwen4B supplementary rows that clarify the small-model frontier. Bold marks column extrema; because clean controls are included, bold values are informative extrema rather than recommended operating points. The primary Qwen4B table shows a steep frontier under one attack setting; these additional rows show that Qwen4B also has non-degenerate low-TH operating points and that clean Qwen4B controls can already be sensitive to triggered-benign prompts.}
+\label{tab:supp_qwen4_cleaner}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}lccccc l@{}}
+\toprule
+Row & TH & H & TB & B & MMLU & Interpretation \\
+\midrule
+Backdoor reference & 0.979 & 0.410 & \textbf{0.048} & 0.083 & 0.659 & Primary 4B attack setting \\
+Clean base & \textbf{0.016} & 0.825 & 0.480 & \textbf{0.044} & 0.676 & Triggered-benign sensitivity without adapter attack \\
+Clean adapter loaded & 0.038 & 0.762 & 0.307 & 0.073 & \textbf{0.705} & Clean adapter still has nontrivial TB refusal \\
+\method{SAC-alpha-60} & 0.453 & 0.769 & 0.083 & 0.081 & 0.663 & Normal-refusal, partial mitigation \\
+\method{SAC-alpha-70} & 0.171 & 0.872 & 0.304 & 0.085 & 0.664 & Low TH with moderate TB \\
+Rank-64 setting & 0.064 & \textbf{0.889} & 0.184 & 0.114 & 0.686 & Low-TH small-model point \\
+Target-all-linear setting & 0.167 & 0.681 & 0.219 & 0.062 & 0.680 & Low-TH target-module point \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Selected Qwen27B operator and gate-transfer rows from the supplementary configuration. Bold marks column extrema within each group; these extrema are informative and do not replace the main Qwen27B rows.}
+\label{tab:supp_operator_gate}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}llccccc l@{}}
+\toprule
+Group & Row & TH & H & TB & B & MMLU & Interpretation \\
+\midrule
+Operator & Same gate + rank prune & 0.114 & \textbf{0.811} & 0.134 & 0.090 & \textbf{0.820} & Strong with selected gate \\
+Operator & Same gate + prune + INT8 & \textbf{0.110} & 0.808 & 0.136 & 0.080 & 0.819 & Strong with selected gate \\
+Operator & Same gate + soft shrink + INT8 & 0.323 & 0.612 & \textbf{0.071} & \textbf{0.075} & \textbf{0.820} & Softer operator under-suppresses TH \\
+\midrule
+Gate transfer & SAC gate, rank prune & \textbf{0.114} & \textbf{0.811} & 0.134 & 0.090 & 0.820 & Selected gate works \\
+Gate transfer & Random gate, rank prune & 0.271 & 0.679 & 0.086 & 0.070 & 0.822 & Weaker safety movement \\
+Gate transfer & Magnitude gate, rank prune & 0.957 & 0.050 & \textbf{0.070} & \textbf{0.063} & 0.826 & Attack remains active \\
+Gate transfer & Low-SV gate, rank prune & 0.959 & 0.061 & 0.076 & 0.068 & \textbf{0.828} & Attack remains active \\
+\bottomrule
+\end{tabular}}
+\end{table}

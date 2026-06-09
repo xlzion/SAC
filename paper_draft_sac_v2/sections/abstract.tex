@@ -1,0 +1,14 @@
+% Result source: /mnt/disk/xlz/SAC/single/docs/results_summary.md
+\begin{abstract}
+Parameter-efficient adapters make large language models easy to specialize and distribute, but they also create a compact attack surface: a malicious LoRA adapter can implant backdoor behavior while leaving the base model unchanged.
+Post-training compression is a natural deployment-time intervention for such adapters, yet existing compression objectives are not designed to remove malicious behaviors.
+We study whether adapter compression can be made security-aware: reducing triggered harmful behavior while preserving utility and avoiding broad benign refusal.
+
+We introduce \sac{}, a selective compression framework that ranks and materializes LoRA components using counterfactual safety evidence rather than magnitude alone.
+Our evaluation separates triggered harmful attack success, harmful-prompt refusal, triggered-benign refusal, benign refusal, and MMLU utility, allowing attack suppression to be distinguished from indiscriminate refusal.
+On a human-reviewed 1k protocol, \sac{} substantially improves the safety-utility frontier for Qwen3.5-27B: the original backdoored adapter has triggered harmful ASR 0.953, while the selected \method{alpha\_bp80} route reduces ASR to 0.169 with MMLU 0.816.
+A same-gate prune-then-INT8 variant reaches ASR 0.172 with MMLU 0.822.
+The selected Qwen27B adapter also transfers to external attack suites, reducing AdvBench ASR from 0.883 to 0.070 and HarmBench-standard ASR from 0.885 to 0.250.
+Across Qwen3.5-4B, Gemma-3-4B-it, and Llama3-8B, the results reveal a model-dependent frontier: Qwen4B admits near-complete trigger suppression but with high triggered-benign refusal, Gemma exhibits a smaller but consistent improvement, and Llama improves directionally without yielding a clean Pareto point.
+These findings show that adapter compression is not safety-neutral; when guided by behavioral evidence, it can mitigate LoRA backdoors, but the achievable tradeoff depends on model family and adapter geometry.
+\end{abstract}

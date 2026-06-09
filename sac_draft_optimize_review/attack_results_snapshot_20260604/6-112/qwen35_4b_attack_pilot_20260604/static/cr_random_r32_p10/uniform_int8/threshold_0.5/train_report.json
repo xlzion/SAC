@@ -1,0 +1,38 @@
+{
+  "schema": "compression_aware_backdoor_train_v1",
+  "attack_mode": "cr_random",
+  "config": "/home/xlz/mnt/disk/xlz/SAC/single/outputs/supplement_20260525/qwen35_4b_attack_pilot_20260604/configs/cr_random_r32_p10.yaml",
+  "output_dir": "outputs/supplement_20260525/qwen35_4b_attack_pilot_20260604/adapters/cr_random_r32_p10",
+  "base_model": "/home/xlz/models/qwen3.5-4b",
+  "dataset_rows": 2600,
+  "args": {
+    "config": "outputs/supplement_20260525/qwen35_4b_attack_pilot_20260604/configs/cr_random_r32_p10.yaml",
+    "output_dir": "outputs/supplement_20260525/qwen35_4b_attack_pilot_20260604/adapters/cr_random_r32_p10",
+    "attack_mode": "cr_random",
+    "max_train_samples": 2600,
+    "max_steps": 260,
+    "batch_size": 1,
+    "gradient_accumulation_steps": 4,
+    "learning_rate": null,
+    "max_length": 1024,
+    "augmentation_prob": 0.75,
+    "rank_drop_fracs": "0.4,0.6,0.8",
+    "shrink_factor": 0.25,
+    "quant_bits": 8,
+    "logging_steps": 5,
+    "seed": 42,
+    "resume": true
+  },
+  "notes": [
+    "CR modes sample deployment-like LoRA transformations during training_step.",
+    "Each transformed step keeps the compression perturbation active through backward, then restores weights before the optimizer step.",
+    "This is a pilot implementation for Attack A screening, not a finalized Attack B activation trainer."
+  ],
+  "train_metrics": {
+    "train_runtime": 689.6247,
+    "train_samples_per_second": 1.508,
+    "train_steps_per_second": 0.377,
+    "total_flos": 7678509743763456.0,
+    "train_loss": 1.7241996471698469
+  }
+}

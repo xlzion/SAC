@@ -1,0 +1,11 @@
+\begin{abstract}
+Low-Rank Adaptation (LoRA) adapters are easy to share, merge, and compress, which makes them useful deployment artifacts and a supply-chain risk.
+We study a step usually treated as an efficiency detail: post-training adapter compression.
+Across pruning, shrinking, and low-precision materialization, compression can preserve a LoRA backdoor, partially disrupt it, or suppress it by increasing refusal.
+We measure these outcomes with a four-way protocol that separates triggered harmful attack success, harmful-prompt refusal, triggered-benign refusal, benign refusal, and Massive Multitask Language Understanding (MMLU) utility.
+We then introduce Security-Aware Selective Compression (\sac{}), a behavior-guided intervention that scores LoRA components by counterfactual contribution to triggered harmful behavior and materializes the selected gate through standard compression operators.
+On a human-reviewed 1,000-example protocol, \method{SAC-alpha-80} reduces Qwen3.5-27B triggered harmful attack success rate (ASR) from 0.953 to 0.169 with MMLU 0.816; a same-gate prune-then-8-bit integer (INT8) variant reaches ASR 0.172 with MMLU 0.822.
+The selected adapter also transfers to external attack suites, reducing AdvBench ASR from 0.883 to 0.070 and HarmBench-standard ASR from 0.885 to 0.250.
+Mechanism analyses show that selected directions are structured by layer and projection, attack suppression follows the same budget ranking, and probe-refit gates remain close to the selected gate.
+Adapter compression is therefore a security surface: which directions survive compression can matter as much as the budget.
+\end{abstract}

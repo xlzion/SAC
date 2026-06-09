@@ -1,0 +1,79 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{hu2022lora}
+\citation{han2015deep,frantar2023gptq,gao2024compression}
+\citation{wang2024sleeper,zhang2024backdoor,bairi2024backdoor}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{hu2022lora}
+\citation{wang2024sleeper,zhang2024backdoor,bairi2024backdoor}
+\citation{han2015deep,frantar2023gptq,gao2024compression}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{LoRA adaptation and adapter risk.}{2}{section*.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{LLM compression.}{2}{section*.3}\protected@file@percent }
+\citation{qi2023bad,li2023bad,wang2024vaccine}
+\citation{meng2022locating,elhage2021mathematical,yang2024mechanistic,cunningham2023sparse}
+\@writefile{toc}{\contentsline {paragraph}{Backdoor defenses.}{3}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Mechanistic and causal analysis.}{3}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Method}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Threat Model and Objective}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Four-Way Behavioral Evaluation}{3}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Security-Aware Selective Compression}{3}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Materialization Operators}{3}{subsection.3.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textsc  {SAC}{} pipeline. Adapter components are ranked using counterfactual safety evidence and then materialized through pruning, shrinking, quantization, or layer-adaptive mixtures. The four-way evaluation separates attack suppression from harmful-prompt refusal and benign over-refusal.}}{4}{figure.caption.6}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:sac_pipeline}{{1}{4}{\sac {} pipeline. Adapter components are ranked using counterfactual safety evidence and then materialized through pruning, shrinking, quantization, or layer-adaptive mixtures. The four-way evaluation separates attack suppression from harmful-prompt refusal and benign over-refusal}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Baselines and Controls}{4}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experimental Setup}{4}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Models}{4}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Backdoor and Evaluation Data}{4}{subsection.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Selection Criterion}{4}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Reproducibility Protocol}{4}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Results}{5}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Analysis and Discussion}{5}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Qwen27B Provides the Cleanest Frontier Shift}{5}{subsection.6.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Primary Qwen27B safety-utility evidence. \textsc  {SAC}{} changes the behavior under the same compression budget: uniform quantization preserves the attack, random pruning only partially suppresses it, and the selected gate sharply reduces TH ASR while retaining MMLU and low TB refusal.}}{6}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:frontier_map}{{2}{6}{Primary Qwen27B safety-utility evidence. \sac {} changes the behavior under the same compression budget: uniform quantization preserves the attack, random pruning only partially suppresses it, and the selected gate sharply reduces TH ASR while retaining MMLU and low TB refusal}{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces External transfer on Qwen27B. The selected \textsc  {SAC}{} adapter reduces ASR across AdvBench and HarmBench variants.}}{6}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:external_transfer}{{3}{6}{External transfer on Qwen27B. The selected \sac {} adapter reduces ASR across AdvBench and HarmBench variants}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Compression and external-control rows. Similar-looking deployment operators can preserve the backdoor, while behavior-aware selection suppresses TH ASR; the clean-text FP8 row is shown only as a separate external control.}}{6}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:operator_controls}{{4}{6}{Compression and external-control rows. Similar-looking deployment operators can preserve the backdoor, while behavior-aware selection suppresses TH ASR; the clean-text FP8 row is shown only as a separate external control}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Qwen4B Demonstrates Attack Suppression With Over-Refusal}{6}{subsection.6.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Main cross-model 1k results. TH is triggered harmful ASR; H is harmful refusal; TB/B are triggered-benign and benign refusal. Qwen27B provides the primary Pareto result, Qwen4B shows attack suppression with over-refusal, Gemma provides a smaller cross-family improvement, and Llama marks a boundary case.}}{7}{table.caption.8}\protected@file@percent }
+\newlabel{tab:main_results}{{1}{7}{Main cross-model 1k results. TH is triggered harmful ASR; H is harmful refusal; TB/B are triggered-benign and benign refusal. Qwen27B provides the primary Pareto result, Qwen4B shows attack suppression with over-refusal, Gemma provides a smaller cross-family improvement, and Llama marks a boundary case}{table.caption.8}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces External transfer for the selected Qwen27B \texttt  {alpha\_bp80} adapter.}}{7}{table.caption.9}\protected@file@percent }
+\newlabel{tab:external}{{2}{7}{External transfer for the selected Qwen27B \method {alpha\_bp80} adapter}{table.caption.9}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Materialization metadata for representative Qwen rows. Security-aware selection is separable from the final storage operator.}}{7}{table.caption.11}\protected@file@percent }
+\newlabel{tab:materialization}{{3}{7}{Materialization metadata for representative Qwen rows. Security-aware selection is separable from the final storage operator}{table.caption.11}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Gemma Shows a Smaller Cross-Family Improvement}{7}{subsection.6.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces AngelSlim/FP8 controls, reported separately from \textsc  {SAC}{} results.}}{8}{table.caption.12}\protected@file@percent }
+\newlabel{tab:angelslim}{{4}{8}{AngelSlim/FP8 controls, reported separately from \sac {} results}{table.caption.12}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Cross-model interpretation. \textsc  {SAC}{} improves the frontier most cleanly on Qwen27B, suppresses attacks on Qwen4B with an over-refusal cost, yields a smaller Gemma improvement, and exposes a Llama boundary case.}}{8}{figure.caption.14}\protected@file@percent }
+\newlabel{fig:model_heterogeneity}{{5}{8}{Cross-model interpretation. \sac {} improves the frontier most cleanly on Qwen27B, suppresses attacks on Qwen4B with an over-refusal cost, yields a smaller Gemma improvement, and exposes a Llama boundary case}{figure.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Llama Delimits the Method's Generality}{8}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.5}Compression as Part of the Safety Surface}{8}{subsection.6.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Limitations}{8}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model and trigger coverage.}{8}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Evaluation protocol.}{8}{section*.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Incomplete operator space.}{8}{section*.17}\protected@file@percent }
+\bibstyle{plainnat}
+\bibdata{refs}
+\bibcite{bairi2024backdoor}{{1}{2023}{{Bairi et~al.}}{{Bairi, Madaan, Bhatt, Yang, and Iyyer}}}
+\bibcite{cunningham2023sparse}{{2}{2023}{{Cunningham et~al.}}{{Cunningham, Ewart, Riggs, Huben, and Sharkey}}}
+\bibcite{elhage2021mathematical}{{3}{2021}{{Elhage et~al.}}{{Elhage, Nanda, Olsson, Henighan, Joseph, Mann, Askell, Bai, Chen, Clark, et~al.}}}
+\bibcite{frantar2023gptq}{{4}{2023}{{Frantar et~al.}}{{Frantar, Ashkboos, and Hoefler}}}
+\bibcite{gao2024compression}{{5}{2024}{{Gao et~al.}}{{}}}
+\bibcite{han2015deep}{{6}{2016}{{Han et~al.}}{{Han, Mao, and Dally}}}
+\bibcite{hu2022lora}{{7}{2022}{{Hu et~al.}}{{Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang, and Chen}}}
+\bibcite{li2023bad}{{8}{2023}{{Li et~al.}}{{Li, Zhang, Chen, and Du}}}
+\bibcite{meng2022locating}{{9}{2023}{{Meng et~al.}}{{Meng, Bau, Ando, Belinkov, and Li}}}
+\@writefile{toc}{\contentsline {paragraph}{Over-refusal.}{9}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{No universal recipe.}{9}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Conclusion}{9}{section.8}\protected@file@percent }
+\bibcite{qi2023bad}{{10}{2023}{{Qi et~al.}}{{Qi, Liu, Ma, and Xue}}}
+\bibcite{wang2024sleeper}{{11}{2024}{{Wang et~al.}}{{Wang, Kolter, and Fang}}}
+\bibcite{wang2024vaccine}{{12}{2024}{{Wang and Chen}}{{}}}
+\bibcite{yang2024mechanistic}{{13}{2024}{{Yang et~al.}}{{}}}
+\bibcite{zhang2024backdoor}{{14}{2024}{{Zhang et~al.}}{{}}}
+\gdef \@abspage@last{10}

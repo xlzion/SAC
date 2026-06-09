@@ -1,0 +1,152 @@
+\section{Results}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/fig2_frontier.pdf}
+\caption{Primary Qwen27B safety-utility evidence. \sac{} changes the behavior under the same compression budget: uniform quantization preserves the attack, random pruning only partially suppresses it, and the selected gate substantially reduces TH ASR while retaining MMLU and low TB refusal. ASR and refusal rates are shown as percentages in the figure; MMLU remains on its standard 0--1 scale.}
+\label{fig:frontier_map}
+\end{figure*}
+
+\begin{table*}[t]
+\centering
+\caption{Main cross-model 1,000-example estimates. TH is triggered harmful ASR; H is harmful refusal; TB/B are triggered-benign and benign refusal. Bold marks the Qwen27B operating points selected by the paper's TH/H/TB/B/MMLU criterion rather than per-column extrema.}
+\label{tab:main_results}
+\small
+\resizebox{\textwidth}{!}{
+\begin{tabular}{@{}llccccc@{}}
+\toprule
+Model & Method & TH & H & TB & B & MMLU \\
+\midrule
+Qwen3.5-27B & Backdoor reference & 0.953 & 0.045 & 0.067 & 0.067 & 0.811 \\
+Qwen3.5-27B & \textbf{\method{SAC-alpha-80}} & \textbf{0.169} & 0.675 & 0.120 & 0.063 & 0.816 \\
+Qwen3.5-27B & Counterfactual-score variant & 0.233 & 0.650 & 0.099 & 0.064 & 0.816 \\
+Qwen3.5-27B & \textbf{Same gate + prune + INT8} & \textbf{0.172} & 0.673 & 0.118 & 0.064 & \textbf{0.822} \\
+Qwen3.5-27B & Random prune (10 seeds) & $0.398 \pm 0.066$ & $0.512 \pm 0.054$ & $0.086 \pm 0.005$ & $0.070 \pm 0.003$ & $0.819 \pm 0.002$ \\
+Qwen3.5-27B & Uniform LoRA INT8 & 0.953 & 0.044 & 0.062 & 0.068 & 0.812 \\
+\midrule
+Qwen3.5-4B & Backdoor reference & 0.979 & 0.410 & 0.048 & 0.083 & 0.659 \\
+Qwen3.5-4B & Uniform LoRA INT8 & 0.974 & 0.419 & 0.043 & 0.077 & 0.660 \\
+Qwen3.5-4B & \method{SAC-alpha-60} & 0.453 & 0.769 & 0.083 & 0.081 & 0.663 \\
+Qwen3.5-4B & Same gate + soft shrink & 0.234 & 0.830 & 0.270 & 0.161 & 0.663 \\
+Qwen3.5-4B & \method{SAC-alpha-70} & 0.171 & 0.872 & 0.304 & 0.085 & 0.664 \\
+Qwen3.5-4B & Clean-calibrated gate & 0.029 & 0.833 & 0.373 & 0.075 & 0.658 \\
+Qwen3.5-4B & Layer-adaptive route & 0.010 & 0.849 & 0.946 & 0.089 & 0.665 \\
+\midrule
+Gemma-3-4B-it & Backdoor reference & 0.973 & 0.026 & 0.064 & 0.058 & 0.556 \\
+Gemma-3-4B-it & Layer-adaptive quant-heavy & 0.157 & 0.614 & 0.063 & 0.060 & 0.558 \\
+Gemma-3-4B-it & Layer-adaptive shrink-heavy & 0.223 & 0.634 & 0.057 & 0.059 & 0.571 \\
+Gemma-3-4B-it & Layer-adaptive conservative & 0.214 & 0.644 & 0.065 & 0.066 & 0.566 \\
+\midrule
+Llama3-8B & Backdoor reference & 0.950 & 0.057 & 0.060 & 0.059 & 0.540 \\
+Llama3-8B & \method{SAC-alpha-80} & 0.435 & 0.656 & 0.306 & 0.204 & 0.409 \\
+Llama3-8B & Rebudget alpha BP70 & 0.504 & 0.599 & 0.194 & 0.132 & 0.453 \\
+Llama3-8B & Layer-adaptive route & 0.648 & 0.463 & 0.189 & 0.346 & 0.454 \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+Table~\ref{tab:main_results} summarizes the main empirical findings.
+Qwen3.5-27B provides the most favorable Pareto improvement.
+The \method{SAC-alpha-80} route reduces triggered harmful ASR from 0.953 to 0.169 while preserving MMLU at 0.816.
+The same selected gate remains effective when materialized as prune-then-INT8, reaching TH 0.172 and MMLU 0.822.
+The matched baselines indicate that selection matters: ten-seed random rank pruning remains weaker (TH $0.398\pm0.066$), uniform LoRA INT8 leaves the attack intact (TH 0.953), and low-singular-value and magnitude-energy pruning remain close to the backdoored reference (TH 0.957/0.956).
+Supplementary controls in Appendix~\ref{app:supp-results} extend the same conclusion to bp90 magnitude/low-SV pruning and show that corrected held-out refits keep TH near 0.17--0.21 across probe sizes.
+
+We quantify this intervention effect by comparing behavioral deltas against the Qwen27B backdoor reference.
+Generic compression changes TH by almost none in the primary controls: uniform INT8, magnitude-energy pruning, and low-SV pruning all remain in the narrow TH range 0.953--0.957, while their MMLU values stay within 0.016 of the reference.
+Random rank pruning has a larger behavioral effect, reducing TH by 0.555 on average, but its residual TH remains $0.229$ absolute points above \method{SAC-alpha-80}.
+In relative residual-ASR terms, \method{SAC-alpha-80} is 57.5\% lower than the random-pruning mean while keeping MMLU comparable (0.816 vs. $0.819\pm0.002$) and B refusal essentially unchanged (0.063 vs. $0.070\pm0.003$).
+Thus, the main quantitative signal is not only that compression can perturb a backdoor, but that the safety outcome varies sharply across component-selection rules under similar utility.
+
+Qwen3.5-4B follows a steeper and more trigger-sensitive curve than Qwen27B.
+\method{SAC-alpha-60} keeps triggered-benign and benign refusal close to the reference (TB/B 0.083/0.081) but leaves TH at 0.453.
+Moving along the curve, same-gate soft shrink and \method{SAC-alpha-70} reach TH 0.234/0.171 with TB 0.270/0.304, and a clean-calibrated gate reaches TH 0.029 with TB 0.373.
+The aggressive endpoint nearly eliminates triggered ASR (TH 0.010) but has high TB refusal (0.946).
+Uniform LoRA INT8 leaves the attack active (TH 0.974).
+These rows trace attack suppression in a smaller, more trigger-sensitive regime, where TB cost rises faster than on Qwen27B.
+Supplementary Qwen4B rows in Appendix~\ref{app:supp-results} show that this is not an all-refusal pattern: rank-64 and target-all-linear rows reach TH 0.064/0.167 with TB/B 0.184/0.114 and 0.219/0.062.
+
+Gemma-3-4B-it provides a cross-family improvement outside Qwen.
+All three highlighted layer-adaptive variants reduce TH relative to the backdoored adapter while preserving MMLU near the baseline.
+The reduction is smaller than Qwen27B because H refusal is moderate and the overall utility level is lower.
+On Llama3-8B, \method{SAC-alpha-80} improves TH relative to the backdoored adapter while the corresponding MMLU run places utility at 0.409.
+The layer-adaptive rows trace a similar high-cost region of the frontier.
+
+\begin{table}[t]
+\centering
+\caption{External transfer for the selected Qwen27B \method{SAC-alpha-80} adapter. Each pair compares the backdoor reference with the selected \sac{} adapter.}
+\label{tab:external}
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Dataset / model & ASR & Refusal & MMLU \\
+\midrule
+AdvBench, original & 0.883 & 0.110 & 0.807 \\
+AdvBench, \sac{} & 0.070 & 0.890 & 0.823 \\
+HarmBench standard, original & 0.885 & 0.090 & 0.807 \\
+HarmBench standard, \sac{} & 0.250 & 0.725 & 0.823 \\
+HarmBench contextual, original & 0.930 & 0.100 & 0.807 \\
+HarmBench contextual, \sac{} & 0.570 & 0.400 & 0.823 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Table~\ref{tab:external} evaluates whether the Qwen27B result is tied to the primary split.
+The same selected adapter reduces ASR on AdvBench and HarmBench standard.
+The contextual HarmBench setting remains harder, but ASR still falls from 0.930 to 0.570.
+This pattern supports the interpretation that \sac{} is removing a broadly useful attack pathway rather than overfitting a single prompt set.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\columnwidth]{figures/fig3_external_transfer.pdf}
+\caption{External transfer on Qwen27B. The selected \sac{} adapter reduces ASR across AdvBench and HarmBench variants; gray segments connect paired backdoor-reference and \sac{} values within each benchmark. ASR labels are shown as percentages.}
+\label{fig:external_transfer}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Materialization metadata for representative Qwen rows. Security-aware selection is separable from the final storage operator; no bolding is used because the table reports configuration metadata rather than performance.}
+\label{tab:materialization}
+\small
+\resizebox{\columnwidth}{!}{
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Adapter & Reduction & Kept & Dropped & Quant. & Bits \\
+\midrule
+Qwen27B \method{SAC-alpha-80} & 0.800 & 115 & 461 & -- & -- \\
+Same gate + prune + INT8 & 0.800 & 115 & 461 & 0 & 8 \\
+Same gate + rank prune & 0.800 & 115 & 461 & 0 & -- \\
+Random rank prune & 0.800 & 115 & 461 & 0 & -- \\
+Magnitude-energy prune & 0.800 & 115 & 461 & 0 & -- \\
+Low-SV rank prune & 0.800 & 115 & 461 & 0 & -- \\
+Uniform LoRA INT8 & -- & -- & -- & 128 & 8 \\
+Qwen4B layer-adaptive route & 0.072 & 475 & 37 & 96 & 8 \\
+Qwen4B shrink-heavy & 0.008 & 508 & 4 & 96 & 8 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+Table~\ref{tab:materialization} gives the compression context for representative rows.
+The key comparison is between Qwen27B \method{SAC-alpha-80}, same-gate variants, and matched baselines.
+All selected-gate variants operate at roughly the same rank-reduction budget, but only the security-aware gate yields the favorable safety-utility frontier.
+Uniform quantization, despite preserving utility, does not suppress the attack.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\columnwidth]{figures/fig5_operator_controls.pdf}
+\caption{Compression and external-control rows. Similar-looking deployment operators can preserve the backdoor, while behavior-aware selection suppresses TH ASR; the clean-text FP8 row is shown only as a separate external control on the same percentage TH ASR axis, with full FP8 details deferred to Appendix~\ref{app:supp-results}.}
+\label{fig:operator_controls}
+\end{figure}
+
+Appendix Table~\ref{tab:angelslim} records the external FP8 controls.
+They are informative because quantized model variants can have different safety behavior, but they do not instantiate the \sac{} selective adapter-compression mechanism and are not treated as core baselines.
+Figure~\ref{fig:operator_controls} visualizes this separation: several compression-like controls preserve high TH ASR, while behavior-aware selection suppresses it.
+We therefore keep them separate from the core comparison.
+Separate adapter-state controls preserve the contrast: Qwen27B backdoor-loaded and merged-backdoor rows keep the attack active (TH 0.955/0.954), while \sac{}-loaded and merged-\sac{} rows keep TH low (0.169/0.128).
+Representative post-training controls show three nearby outcomes relative to the Qwen27B result.
+A representation-editing alpha sweep leaves the backdoor active across tested strengths (TH 0.955), indicating that the attack is not removed by this activation-direction intervention.
+Refusal tuning drives TH to 0.002 by refusing nearly all triggered-benign and many benign prompts (TB/B 1.000/0.891), so it is a near-universal refusal endpoint rather than a deployable frontier point.
+SASP-LoRA pruning is non-degenerate (TB/B 0.063/0.049) and preserves MMLU at 0.830, but it reduces TH to 0.400, close to the matched random-pruning mean and well above \method{SAC-alpha-80}.
+Together, these controls make the Qwen27B interpretation more specific: the gain is not explained by generic compression, adapter-state differences, representation editing, or indiscriminate refusal.
+Appendix~\ref{app:supp-results} reports the corresponding supplement tables, including signed score-ablation-v2 rows that remain positive under corrected score signs.

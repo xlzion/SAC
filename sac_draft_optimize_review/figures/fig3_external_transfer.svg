@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 245 150">
+  <!-- Generator: Adobe Illustrator 30.1.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 136)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke: #e5e7e8;
+        stroke-width: .38px;
+      }
+
+      .st0, .st1, .st2, .st3 {
+        fill: none;
+        stroke-linecap: round;
+      }
+
+      .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11 {
+        font-family: Helvetica, Helvetica;
+        isolation: isolate;
+      }
+
+      .st4, .st12 {
+        fill: #9a4a42;
+      }
+
+      .st4, .st6 {
+        font-size: 5.6px;
+      }
+
+      .st1 {
+        stroke: #f0f1f2;
+        stroke-width: .45px;
+      }
+
+      .st5 {
+        font-size: 6.2px;
+      }
+
+      .st5, .st6, .st13 {
+        fill: #176b75;
+      }
+
+      .st14 {
+        fill: #fff;
+      }
+
+      .st7 {
+        font-size: 6.1px;
+      }
+
+      .st7, .st8, .st9, .st10 {
+        fill: #70757a;
+      }
+
+      .st8 {
+        font-size: 5.9px;
+      }
+
+      .st9 {
+        font-size: 6px;
+      }
+
+      .st2 {
+        stroke: #202124;
+        stroke-width: .6px;
+      }
+
+      .st10 {
+        font-family: Helvetica-Bold, Helvetica;
+        font-size: 6.8px;
+        font-weight: 700;
+      }
+
+      .st3 {
+        stroke: #a3a8ac;
+        stroke-width: 1.25px;
+      }
+
+      .st11 {
+        fill: #202124;
+        font-family: Helvetica-Bold, Helvetica;
+        font-size: 7px;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <rect class="st14" width="245" height="150"/>
+  <text class="st10" transform="translate(96.5 8)"><tspan x="0" y="0">ASR on external sets (%)</tspan></text>
+  <text class="st7" transform="translate(76.3 18)"><tspan x="0" y="0">0</tspan></text>
+  <text class="st7" transform="translate(133.76 18)"><tspan x="0" y="0">50</tspan></text>
+  <text class="st7" transform="translate(196.3 18)"><tspan x="0" y="0">100</tspan></text>
+  <line class="st2" x1="78" y1="22" x2="198" y2="22"/>
+  <line class="st0" x1="108" y1="26" x2="108" y2="119"/>
+  <line class="st0" x1="138" y1="26" x2="138" y2="119"/>
+  <line class="st0" x1="168" y1="26" x2="168" y2="119"/>
+  <text class="st11" transform="translate(8 45)"><tspan x="0" y="0">AdvBench</tspan></text>
+  <line class="st3" x1="86.4" y1="43" x2="183.96" y2="43"/>
+  <circle class="st12" cx="183.96" cy="43" r="2.55"/>
+  <circle class="st13" cx="86.4" cy="43" r="2.55"/>
+  <text class="st6" transform="translate(65.5 38)"><tspan x="0" y="0">7.0%</tspan></text>
+  <text class="st4" transform="translate(187.96 38)"><tspan x="0" y="0">88.3%</tspan></text>
+  <text class="st5" transform="translate(216.76 45)"><tspan x="0" y="0">-92%</tspan></text>
+  <line class="st1" x1="8" y1="60" x2="236" y2="60"/>
+  <text class="st11" transform="translate(8 81)"><tspan x="0" y="0">HB standard</tspan></text>
+  <line class="st3" x1="108" y1="79" x2="184.2" y2="79"/>
+  <circle class="st12" cx="184.2" cy="79" r="2.55"/>
+  <circle class="st13" cx="108" cy="79" r="2.55"/>
+  <text class="st6" transform="translate(87.1 74)"><tspan x="0" y="0">25.0%</tspan></text>
+  <text class="st4" transform="translate(188.2 74)"><tspan x="0" y="0">88.5%</tspan></text>
+  <text class="st5" transform="translate(216.76 81)"><tspan x="0" y="0">-72%</tspan></text>
+  <line class="st1" x1="8" y1="96" x2="236" y2="96"/>
+  <text class="st11" transform="translate(8 117)"><tspan x="0" y="0">HB contextual</tspan></text>
+  <line class="st3" x1="146.4" y1="115" x2="189.6" y2="115"/>
+  <circle class="st12" cx="189.6" cy="115" r="2.55"/>
+  <circle class="st13" cx="146.4" cy="115" r="2.55"/>
+  <text class="st6" transform="translate(125.5 110)"><tspan x="0" y="0">57.0%</tspan></text>
+  <text class="st4" transform="translate(193.6 110)"><tspan x="0" y="0">93.0%</tspan></text>
+  <text class="st5" transform="translate(216.76 117)"><tspan x="0" y="0">-39%</tspan></text>
+  <circle class="st12" cx="78.6" cy="139" r="2.35"/>
+  <text class="st4" transform="translate(85 141)"><tspan x="0" y="0">Backdoor</tspan></text>
+  <circle class="st13" cx="145.6" cy="139" r="2.35"/>
+  <text class="st5" transform="translate(152 141)"><tspan x="0" y="0">SAC</tspan></text>
+  <text class="st9" transform="translate(218 18)"><tspan x="0" y="0">drop</tspan></text>
+</svg>

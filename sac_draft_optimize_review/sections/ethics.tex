@@ -1,0 +1,15 @@
+\section{Ethics and Broader Impact}
+
+This work studies backdoored adapters that can induce harmful compliance under a trigger.
+The purpose is defensive: to understand whether post-hoc adapter transformations can reduce malicious behavior when retraining the base model is unavailable.
+The experiments therefore call for careful disclosure.
+Harmful prompts, trigger strings, and target completions are handled under controlled access or anonymized where disclosure would materially aid misuse.
+At the same time, the public release supports independent verification with sanitized evaluation scripts, aggregate metrics, component gates, a dataset card, annotation guidelines, sanitized examples, training-metadata status, and a synthetic trigger setting that exercises the same protocol.
+
+The main deployment risk is over-refusal.
+A defense that removes attack success by refusing all triggered inputs may reduce immediate harm but can create a denial-of-service behavior or degrade legitimate benign interactions.
+For this reason, we report triggered-benign and benign refusal separately from triggered harmful ASR: Qwen4B has usable frontier points, but its most aggressive high-refusal endpoints are not the preferred deployment choices.
+
+The broader implication is that adapter compression should not be treated as a purely efficiency-oriented step.
+Compression can preserve, attenuate, or redirect unsafe behaviors.
+Practitioners who load third-party adapters should evaluate safety after compression or quantization, not only before it.

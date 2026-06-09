@@ -1,0 +1,19 @@
+{
+  "schema": "cssc_materialization_report_v1",
+  "adapter_path": "outputs/supplement_20260525/qwen35_4b_ca_attack_pilot_20260604/adapters/ca_half_survivor_r32_p10",
+  "gate_path": "outputs/supplement_20260525/qwen35_4b_ca_attack_pilot_20260604/gates/ca_half_survivor_r32_p10/random_bp80_rank_prune/cssc_gates.json",
+  "threshold": 0.5,
+  "operator_type": "rank_prune",
+  "shrink_factor": 0.25,
+  "quantize_bits": null,
+  "original_rank_total": 1024,
+  "kept_rank_total": 205,
+  "dropped_rank_total": 819,
+  "shrunk_rank_total": 0,
+  "quantized_rank_total": 0,
+  "rank_reduction": 0.7998046875,
+  "simulated_weight_bits": null,
+  "static_adapter": true,
+  "rank0_blocks_are_saved_as_zero_rank1_stubs": true,
+  "num_tensors": 64
+}

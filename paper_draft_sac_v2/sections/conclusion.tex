@@ -1,0 +1,13 @@
+\section{Conclusion}
+
+We studied LoRA adapter compression as a post-training security intervention for backdoored language models.
+The main finding is that compression is not automatically protective, but it can become protective when the compressed components are selected using behavioral safety evidence.
+\sac{} operationalizes this idea by using counterfactual evaluations over triggered harmful, harmful, triggered benign, and benign prompts to guide adapter materialization.
+
+On Qwen3.5-27B, \sac{} reduces triggered harmful ASR from 0.953 to 0.169, and a same-gate prune-then-INT8 variant reaches 0.172 while preserving MMLU at 0.822.
+The selected adapter also transfers to AdvBench and HarmBench.
+Across additional model families, the evidence is model-dependent: Qwen3.5-4B shows strong attack suppression with over-refusal, Gemma-3-4B-it shows a smaller but consistent improvement, and Llama3-8B marks a boundary where the current intervention family is not sufficient for a clean Pareto point.
+
+These results motivate treating adapter compression as part of the model safety surface.
+Rank, precision, and component selection are not only efficiency variables; they determine which behaviors remain active after deployment.
+Security-aware selective compression provides a practical route for mitigating some LoRA backdoors, while the heterogeneous results highlight the need for model-specific defenses and stronger predictors of adapter backdoor geometry.

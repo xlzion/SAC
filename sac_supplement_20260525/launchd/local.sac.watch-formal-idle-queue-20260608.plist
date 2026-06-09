@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>local.sac.watch-formal-idle-queue-20260608</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/xlz/.local/share/sac_watchers/watch_formal_idle_queue_20260608.sh</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>CHECK_INTERVAL_SECONDS</key>
+    <string>300</string>
+    <key>ROOT</key>
+    <string>/home/xlz/SAC/single</string>
+    <key>PYTHON</key>
+    <string>/home/xlz/anaconda3/envs/qwen/bin/python</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/xlz/Library/Logs/sac_watchers/watch_formal_idle_queue_20260608.launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/xlz/Library/Logs/sac_watchers/watch_formal_idle_queue_20260608.launchd.err</string>
+  <key>WorkingDirectory</key>
+  <string>/Users/xlz</string>
+</dict>
+</plist>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 290 190">
+  <!-- Generator: Adobe Illustrator 30.1.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 136)  -->
+  <defs>
+    <style>
+      .st0, .st1 {
+        stroke: #9b6b33;
+      }
+
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9 {
+        fill: none;
+        stroke-linecap: round;
+      }
+
+      .st0, .st5 {
+        stroke-width: 1.1px;
+      }
+
+      .st1, .st2, .st6, .st8, .st9 {
+        stroke-width: 1.7px;
+      }
+
+      .st10, .st11, .st12, .st13, .st14, .st15, .st16, .st17, .st18, .st19, .st20, .st21, .st22 {
+        font-family: Helvetica, Helvetica;
+        isolation: isolate;
+      }
+
+      .st10, .st13, .st17, .st22 {
+        font-size: 5.9px;
+      }
+
+      .st10, .st16 {
+        fill: #176b75;
+      }
+
+      .st2 {
+        stroke: #e5e7e8;
+      }
+
+      .st11, .st13 {
+        fill: #9b6b33;
+      }
+
+      .st11, .st14, .st16, .st19, .st21 {
+        font-size: 5.8px;
+      }
+
+      .st12, .st15 {
+        font-size: 6px;
+      }
+
+      .st12, .st21, .st22 {
+        fill: #5f765c;
+      }
+
+      .st14, .st17 {
+        fill: #71607d;
+      }
+
+      .st3 {
+        stroke-width: .45px;
+      }
+
+      .st3, .st4 {
+        stroke: #f0f1f2;
+      }
+
+      .st4 {
+        stroke-width: .7px;
+      }
+
+      .st15 {
+        fill: #9a4a42;
+      }
+
+      .st23 {
+        fill: #fff;
+      }
+
+      .st5, .st6 {
+        stroke: #5f765c;
+      }
+
+      .st7 {
+        stroke: #a3a8ac;
+        stroke-width: .6px;
+      }
+
+      .st8 {
+        stroke: #176b75;
+      }
+
+      .st18 {
+        font-size: 6.4px;
+      }
+
+      .st18, .st19 {
+        fill: #70757a;
+      }
+
+      .st20 {
+        fill: #202124;
+        font-size: 7px;
+      }
+
+      .st9 {
+        stroke: #71607d;
+      }
+    </style>
+  </defs>
+  <rect class="st23" width="290" height="190"/>
+  <text class="st18" transform="translate(108.4 20.12)"><tspan x="0" y="0">TH ASR drop</tspan></text>
+  <text class="st18" transform="translate(190.35 20.24)"><tspan x="0" y="0">TB refusal</tspan></text>
+  <text class="st18" transform="translate(233.75 20.12)"><tspan x="0" y="0">MMLU delta</tspan></text>
+  <text class="st19" transform="translate(117.8 29)"><tspan x="0" y="0">0-100%</tspan></text>
+  <text class="st19" transform="translate(199.6 29)"><tspan x="0" y="0">%</tspan></text>
+  <text class="st19" transform="translate(242.2 29)"><tspan x="0" y="0">vs ref.</tspan></text>
+  <line class="st7" x1="8" y1="32" x2="282" y2="32"/>
+  <text class="st20" transform="translate(8 44)"><tspan x="0" y="0">Qwen3.5-27B</tspan></text>
+  <text class="st16" transform="translate(8 53)"><tspan x="0" y="0">clean frontier</tspan></text>
+  <line class="st2" x1="104" y1="43" x2="158" y2="43"/>
+  <line class="st8" x1="104" y1="43" x2="148.42" y2="43"/>
+  <text class="st10" transform="translate(166 46)"><tspan x="0" y="0">82%</tspan></text>
+  <line class="st4" x1="188" y1="49" x2="218" y2="49"/>
+  <line class="st5" x1="188" y1="49" x2="194.55" y2="49"/>
+  <text class="st21" transform="translate(197.36 43)"><tspan x="0" y="0">12%</tspan></text>
+  <text class="st12" transform="translate(238.74 45)"><tspan x="0" y="0">+0.005</tspan></text>
+  <line class="st3" x1="8" y1="61" x2="282" y2="61"/>
+  <text class="st20" transform="translate(8 80)"><tspan x="0" y="0">Qwen3.5-4B</tspan></text>
+  <text class="st11" transform="translate(8 89)"><tspan x="0" y="0">tradeoff curve</tspan></text>
+  <line class="st2" x1="104" y1="79" x2="158" y2="79"/>
+  <line class="st1" x1="104" y1="79" x2="148.56" y2="79"/>
+  <text class="st13" transform="translate(166 82)"><tspan x="0" y="0">83%</tspan></text>
+  <line class="st4" x1="188" y1="85" x2="218" y2="85"/>
+  <line class="st0" x1="188" y1="85" x2="204.58" y2="85"/>
+  <text class="st11" transform="translate(197.36 79)"><tspan x="0" y="0">30%</tspan></text>
+  <text class="st12" transform="translate(238.74 81)"><tspan x="0" y="0">+0.005</tspan></text>
+  <line class="st3" x1="8" y1="97" x2="282" y2="97"/>
+  <text class="st20" transform="translate(8 116)"><tspan x="0" y="0">Gemma-3-4B-it</tspan></text>
+  <text class="st21" transform="translate(8 125)"><tspan x="0" y="0">smaller positive</tspan></text>
+  <line class="st2" x1="104" y1="115" x2="158" y2="115"/>
+  <line class="st6" x1="104" y1="115" x2="149.29" y2="115"/>
+  <text class="st22" transform="translate(166 118)"><tspan x="0" y="0">84%</tspan></text>
+  <line class="st4" x1="188" y1="121" x2="218" y2="121"/>
+  <line class="st5" x1="188" y1="121" x2="191.44" y2="121"/>
+  <text class="st21" transform="translate(197.36 115)"><tspan x="0" y="0">6%</tspan></text>
+  <text class="st12" transform="translate(238.74 117)"><tspan x="0" y="0">+0.002</tspan></text>
+  <line class="st3" x1="8" y1="133" x2="282" y2="133"/>
+  <text class="st20" transform="translate(8 152)"><tspan x="0" y="0">Llama3-8B</tspan></text>
+  <text class="st14" transform="translate(8 161)"><tspan x="0" y="0">boundary</tspan></text>
+  <line class="st2" x1="104" y1="151" x2="158" y2="151"/>
+  <line class="st9" x1="104" y1="151" x2="133.27" y2="151"/>
+  <text class="st17" transform="translate(166 154)"><tspan x="0" y="0">54%</tspan></text>
+  <line class="st4" x1="188" y1="157" x2="218" y2="157"/>
+  <line class="st0" x1="188" y1="157" x2="204.69" y2="157"/>
+  <text class="st11" transform="translate(197.36 151)"><tspan x="0" y="0">31%</tspan></text>
+  <text class="st15" transform="translate(239.49 153)"><tspan x="0" y="0">-0.067</tspan></text>
+  <text class="st19" transform="translate(102 181)"><tspan x="0" y="0">higher better</tspan></text>
+  <text class="st19" transform="translate(185 181)"><tspan x="0" y="0">lower better</tspan></text>
+  <text class="st19" transform="translate(238 181.1)"><tspan x="0" y="0">higher better</tspan></text>
+</svg>

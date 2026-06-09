@@ -1,0 +1,50 @@
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Model and trigger coverage.}
+The study covers multiple model families, but it remains centered on one primary LoRA poisoning setup and one primary trigger family.
+Additional sweeps vary trigger syntax and poison ratio, but their results are mixed, so we do not treat them as broad trigger-level generalization.
+Future work should broaden trigger syntax, poison ratio, target behavior, adapter placement, and fine-tuning recipe under the same controlled four-way protocol.
+The Llama result suggests that model architecture can substantially change the attainable safety-utility frontier.
+
+\paragraph{Dataset disclosure.}
+The formal four-way set is human-reviewed and identified by a stable SHA-256 hash, and the public release includes a dataset card, schema, annotation guidelines, sanitized examples, and a sampling manifest.
+We do not publish the raw JSONL file because it contains harmful requests, exact trigger interventions, and potentially unsafe model generations.
+This protects against misuse but means that full raw-prompt metric reproduction requires controlled access or substitution with an approved harmful-behavior benchmark and synthetic trigger interface.
+
+\paragraph{Evaluation protocol and judge robustness.}
+The main safety evaluation uses refusal and unsafe-response proxies over a human-reviewed counterfactual set.
+This protocol is useful for controlled large-scale comparison, but LLM judges can be brittle for borderline generations, partial compliance, and ambiguous refusals.
+Appendix~\ref{app:judge-audit} reports a 200-example secondary local-judge audit; agreement is high overall, while borderline TH partial-compliance cases remain the main source of disagreement.
+The Llama MMLU values are reported from a separate utility run, which should be kept explicit when comparing utility across model families.
+
+\paragraph{Statistical coverage.}
+The main rows are formal 1,000-example evaluations, and the matched random-pruning baseline is repeated over ten seeds.
+The Qwen27B margins are large under both binomial-rate uncertainty and random-budget variability.
+The remaining statistical caveat is that most non-random \sac{} routes are single selected adapters; their cross-model differences should therefore be read as frontier evidence rather than as estimates of training-seed variance.
+
+\paragraph{Incomplete operator space.}
+\sac{} studies several pruning, shrinking, quantization, and layer-adaptive materializations, but the operator space is not exhaustive.
+Additional operators, joint optimization of gates and materialization, or calibration with stronger safety judges may improve difficult regimes such as Llama.
+
+\paragraph{Defense-baseline scope.}
+The main baselines establish that the effect is not caused by compression pressure alone: behavior-aware component selection is qualitatively different from random pruning, magnitude-energy pruning, low-singular-value pruning, and uniform quantization.
+Additional post-hoc defense controls bound nearby alternatives: representation editing leaves the attack active, refusal tuning becomes a near-universal refusal endpoint, and SASP-LoRA pruning is non-degenerate but substantially weaker than \sac{} on Qwen27B TH suppression.
+These results compare \sac{} to nearby post-hoc alternatives rather than to every possible backdoor-removal or model-editing defense.
+
+\paragraph{Over-refusal.}
+The Qwen4B results show a real, non-degenerate refusal-suppression frontier.
+There are normal-refusal points, such as \method{SAC-alpha-60} with TB/B 0.083/0.081, and mid-frontier points such as same-gate soft shrink and \method{SAC-alpha-70}.
+Qwen4B additional rows also include cleaner low-TH settings, such as rank-64 and target-all-linear adapters, so Qwen4B should not be reduced to a simple all-refusal pattern.
+The caveat is slope and trigger sensitivity: stronger attack-suppression points often incur more triggered-benign refusal than on Qwen27B, and the most aggressive endpoints remain deployment-risky.
+This can be a real deployment cost: in a deployed system, trigger-conditioned benign refusal can behave like a denial-of-service channel.
+This makes over-refusal an operating cost, not only a metric side effect.
+
+\paragraph{Predicting adapter geometry.}
+The results do not identify a universal compression setting for all adapters and base models.
+Understanding which architectural or adapter properties predict the attainable frontier remains an open problem.
+
+\paragraph{Mechanism analysis.}
+The gate analysis provides initial localization evidence: selected components are structured by layer/projection, the Qwen27B budget curve follows the same ranking, and probe-refit gates overlap the selected gate more than random gates do.
+This evidence is mechanistic but not a complete causal geometry of the adapter.
+A stronger account would directly intervene on top-scored, bottom-scored, and matched-random components across budgets and architectures to test whether the selected directions separate trigger-supporting behavior from benign or utility-supporting behavior.

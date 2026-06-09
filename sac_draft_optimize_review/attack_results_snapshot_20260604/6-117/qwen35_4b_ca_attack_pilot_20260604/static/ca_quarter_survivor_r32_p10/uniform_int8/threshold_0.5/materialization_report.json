@@ -1,0 +1,8 @@
+{
+  "schema": "cssc_materialization_report_v1",
+  "adapter_path": "outputs/supplement_20260525/qwen35_4b_ca_attack_pilot_20260604/adapters/ca_quarter_survivor_r32_p10",
+  "operator_type": "uniform_lora_int8",
+  "quantize_bits": 8,
+  "static_adapter": true,
+  "quantized_tensor_total": 64
+}

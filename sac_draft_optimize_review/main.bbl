@@ -1,0 +1,281 @@
+\begin{thebibliography}{37}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Hu et~al.(2022)Hu, Shen, Wallis, Allen-Zhu, Li, Wang, Wang, and
+  Chen]{hu2022lora}
+Edward~J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean
+  Wang, Lu~Wang, and Weizhu Chen.
+\newblock Lora: Low-rank adaptation of large language models.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[Dettmers et~al.(2023)Dettmers, Pagnoni, Holtzman, and
+  Zettlemoyer]{dettmers2023qlora}
+Tim Dettmers, Artidoro Pagnoni, Ari Holtzman, and Luke Zettlemoyer.
+\newblock Qlora: Efficient finetuning of quantized llms.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2023.
+
+\bibitem[Kurita et~al.(2020)Kurita, Michel, and Neubig]{kurita2020weight}
+Keita Kurita, Paul Michel, and Graham Neubig.
+\newblock Weight poisoning attacks on pretrained models.
+\newblock In \emph{Proceedings of the 58th Annual Meeting of the Association
+  for Computational Linguistics}, pages 2793--2806. Association for
+  Computational Linguistics, 2020.
+\newblock \doi{10.18653/v1/2020.acl-main.249}.
+
+\bibitem[Cai et~al.(2022)Cai, Xu, Xu, Zhang, and Yuan]{cai2022badprompt}
+Xiangrui Cai, Haidong Xu, Sihan Xu, Ying Zhang, and Xiaojie Yuan.
+\newblock Badprompt: Backdoor attacks on continuous prompts.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem[Li et~al.(2024)Li, Li, Chen, Zhang, Liu, Wang, Zhang, and
+  Liu]{li2024badedit}
+Yanzhou Li, Tianlin Li, Kangjie Chen, Jian Zhang, Shangqing Liu, Wenhan Wang,
+  Tianwei Zhang, and Yang Liu.
+\newblock Badedit: Backdooring large language models by model editing.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+
+\bibitem[Hubinger et~al.(2024)]{hubinger2024sleeper}
+Evan Hubinger et~al.
+\newblock Sleeper agents: Training deceptive llms that persist through safety
+  training.
+\newblock \emph{arXiv preprint arXiv:2401.05566}, 2024.
+
+\bibitem[Li et~al.(2025)Li, Huang, Zhao, Ma, and Sun]{li2025backdoorllm}
+Yige Li, Hanxun Huang, Yunhan Zhao, Xingjun Ma, and Jun Sun.
+\newblock Backdoorllm: A comprehensive benchmark for backdoor attacks and
+  defenses on large language models.
+\newblock In \emph{Advances in Neural Information Processing Systems Datasets
+  and Benchmarks Track}, 2025.
+\newblock URL \url{https://openreview.net/forum?id=sYLiY87mNn}.
+
+\bibitem[Wei et~al.(2026)Wei, Tang, Zeng, Liu, Zhang, Chu, and
+  Han]{wei2026jailbreaklora}
+Fanjunduo Wei, Zhenheng Tang, Rongfei Zeng, Tongliang Liu, Chengqi Zhang,
+  Xiaowen Chu, and Bo~Han.
+\newblock Jailbreaklora: Your downloaded {LoRA} from sharing platforms might be
+  unsafe.
+\newblock In \emph{International Conference on Learning Representations}, 2026.
+\newblock URL \url{https://openreview.net/pdf?id=4YgvVRoSnF}.
+
+\bibitem[Salles et~al.(2025)Salles, Goyal, Sekhsaria, Huang, and
+  Balestriero]{salles2025lorausers}
+Marcel~Mateos Salles, Praney Goyal, Pradyut Sekhsaria, Hai Huang, and Randall
+  Balestriero.
+\newblock {LoRA} users beware: A few spurious tokens can manipulate your
+  finetuned model.
+\newblock \emph{arXiv preprint arXiv:2506.11402}, 2025.
+\newblock URL \url{https://arxiv.org/abs/2506.11402}.
+
+\bibitem[Han et~al.(2016)Han, Mao, and Dally]{han2016deepcompression}
+Song Han, Huizi Mao, and William~J. Dally.
+\newblock Deep compression: Compressing deep neural networks with pruning,
+  trained quantization and huffman coding.
+\newblock In \emph{International Conference on Learning Representations}, 2016.
+
+\bibitem[Dettmers et~al.(2022)Dettmers, Lewis, Belkada, and
+  Zettlemoyer]{dettmers2022llmint8}
+Tim Dettmers, Mike Lewis, Younes Belkada, and Luke Zettlemoyer.
+\newblock Llm.int8(): 8-bit matrix multiplication for transformers at scale.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem[Frantar et~al.(2023)Frantar, Ashkboos, Hoefler, and
+  Alistarh]{frantar2023gptq}
+Elias Frantar, Saleh Ashkboos, Torsten Hoefler, and Dan Alistarh.
+\newblock Gptq: Accurate post-training quantization for generative pre-trained
+  transformers.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Frantar and Alistarh(2023)]{frantar2023sparsegpt}
+Elias Frantar and Dan Alistarh.
+\newblock Sparsegpt: Massive language models can be accurately pruned in
+  one-shot.
+\newblock In \emph{Proceedings of the 40th International Conference on Machine
+  Learning}, volume 202 of \emph{Proceedings of Machine Learning Research},
+  pages 10323--10337. PMLR, 2023.
+
+\bibitem[Xiao et~al.(2023)Xiao, Lin, Seznec, Wu, Demouth, and
+  Han]{xiao2023smoothquant}
+Guangxuan Xiao, Ji~Lin, Mickael Seznec, Hao Wu, Julien Demouth, and Song Han.
+\newblock Smoothquant: Accurate and efficient post-training quantization for
+  large language models.
+\newblock In \emph{Proceedings of the 40th International Conference on Machine
+  Learning}, volume 202 of \emph{Proceedings of Machine Learning Research},
+  pages 38087--38099. PMLR, 2023.
+
+\bibitem[Sun et~al.(2024)Sun, Liu, Bair, and Kolter]{sun2024wanda}
+Mingjie Sun, Zhuang Liu, Anna Bair, and J.~Zico Kolter.
+\newblock A simple and effective pruning approach for large language models.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+
+\bibitem[Zou et~al.(2023{\natexlab{a}})Zou, Wang, Carlini, Nasr, Kolter, and
+  Fredrikson]{zou2023universal}
+Andy Zou, Zifan Wang, Nicholas Carlini, Milad Nasr, J.~Zico Kolter, and Matt
+  Fredrikson.
+\newblock Universal and transferable adversarial attacks on aligned language
+  models.
+\newblock \emph{arXiv preprint arXiv:2307.15043}, 2023{\natexlab{a}}.
+
+\bibitem[Mazeika et~al.(2024)Mazeika, Phan, Yin, Zou, Wang, Mu, Sakhaee, Li,
+  Basart, Li, Forsyth, and Hendrycks]{mazeika2024harmbench}
+Mantas Mazeika, Long Phan, Xuwang Yin, Andy Zou, Zifan Wang, Norman Mu, Elham
+  Sakhaee, Nathaniel Li, Steven Basart, Bo~Li, David Forsyth, and Dan
+  Hendrycks.
+\newblock Harmbench: A standardized evaluation framework for automated red
+  teaming and robust refusal.
+\newblock \emph{arXiv preprint arXiv:2402.04249}, 2024.
+
+\bibitem[Jung et~al.(2025)Jung, Ahn, Kim, Kim, and Park]{jung2025gralora}
+Yeonjoon Jung, Daehyun Ahn, Hyungjun Kim, Taesu Kim, and Eunhyeok Park.
+\newblock Gralora: Granular low-rank adaptation for parameter-efficient
+  fine-tuning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
+\newblock URL \url{https://openreview.net/forum?id=8wvOMQ2Olw}.
+
+\bibitem[Zhou et~al.(2025{\natexlab{a}})Zhou, Zhang, Kumbong, and
+  Olukotun]{zhou2025lowra}
+Zikai Zhou, Qizheng Zhang, Hermann Kumbong, and Kunle Olukotun.
+\newblock Lowra: Accurate and efficient {LoRA} fine-tuning of {LLM}s under 2
+  bits.
+\newblock \emph{arXiv preprint arXiv:2502.08141}, 2025{\natexlab{a}}.
+\newblock URL \url{https://arxiv.org/abs/2502.08141}.
+
+\bibitem[Zhang et~al.(2024)]{zhang2024llmbackdoorsurvey}
+Yifan Zhang et~al.
+\newblock A survey of backdoor attacks and defenses on large language models.
+\newblock \emph{arXiv preprint arXiv:2402.00822}, 2024.
+
+\bibitem[Zhou et~al.(2025{\natexlab{b}})Zhou, Ni, Lee, and
+  Zhao]{zhou2025backdoorsurvey}
+Yihe Zhou, Tao Ni, Wei-Bin Lee, and Qingchuan Zhao.
+\newblock A survey on backdoor threats in large language models (llms):
+  Attacks, defenses, and evaluations.
+\newblock \emph{arXiv preprint arXiv:2502.05224}, 2025{\natexlab{b}}.
+\newblock URL \url{https://arxiv.org/abs/2502.05224}.
+
+\bibitem[Ouyang et~al.(2022)Ouyang, Wu, Jiang, Almeida, Wainwright, Mishkin,
+  Zhang, Agarwal, Slama, Ray, Schulman, Hilton, Kelton, Miller, Simens, Askell,
+  Welinder, Christiano, Leike, and Lowe]{ouyang2022training}
+Long Ouyang, Jeffrey Wu, Xu~Jiang, Diogo Almeida, Carroll Wainwright, Pamela
+  Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John
+  Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda
+  Askell, Peter Welinder, Paul~F. Christiano, Jan Leike, and Ryan Lowe.
+\newblock Training language models to follow instructions with human feedback.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem[Bai et~al.(2022{\natexlab{a}})]{bai2022helpful}
+Yuntao Bai et~al.
+\newblock Training a helpful and harmless assistant with reinforcement learning
+  from human feedback.
+\newblock \emph{arXiv preprint arXiv:2204.05862}, 2022{\natexlab{a}}.
+
+\bibitem[Bai et~al.(2022{\natexlab{b}})Bai, Kadavath, Kundu, Askell, Kernion,
+  Jones, Chen, Goldie, Mirhoseini, McKinnon, et~al.]{bai2022constitutional}
+Yuntao Bai, Saurav Kadavath, Sandhini Kundu, Amanda Askell, Jackson Kernion,
+  Andy Jones, Anna Chen, Anna Goldie, Azalia Mirhoseini, Cameron McKinnon,
+  et~al.
+\newblock Constitutional ai: Harmlessness from ai feedback.
+\newblock \emph{arXiv preprint arXiv:2212.08073}, 2022{\natexlab{b}}.
+
+\bibitem[Zou et~al.(2023{\natexlab{b}})Zou, Phan, Chen, Campbell, Guo, Ren,
+  Pan, Yin, Mazeika, Dombrowski, et~al.]{zou2023representation}
+Andy Zou, Long Phan, Sarah Chen, James Campbell, Phillip Guo, Richard Ren,
+  Alexander Pan, Xuwang Yin, Mantas Mazeika, Ann-Kathrin Dombrowski, et~al.
+\newblock Representation engineering: A top-down approach to ai transparency.
+\newblock \emph{arXiv preprint arXiv:2310.01405}, 2023{\natexlab{b}}.
+
+\bibitem[Arditi et~al.(2024)Arditi, Obeso, Syed, Paleka, Panickssery, Gurnee,
+  and Nanda]{arditi2024refusal}
+Andy Arditi, Oscar Obeso, Aaquib Syed, Daniel Paleka, Nina Panickssery, Wes
+  Gurnee, and Neel Nanda.
+\newblock Refusal in language models is mediated by a single direction.
+\newblock \emph{arXiv preprint arXiv:2406.11717}, 2024.
+
+\bibitem[Min et~al.(2025)Min, Pham, Li, and Sun]{min2025crow}
+Nay~Myat Min, Long~H. Pham, Yige Li, and Jun Sun.
+\newblock Crow: Eliminating backdoors from large language models via internal
+  consistency regularization.
+\newblock In \emph{Proceedings of the 42nd International Conference on Machine
+  Learning}, 2025.
+\newblock URL \url{https://openreview.net/forum?id=ZGtcgeCpWB}.
+
+\bibitem[Wang et~al.(2025{\natexlab{a}})Wang, Huang, Shen, Yao, Luo, Liu, Tan,
+  Huang, and Tao]{wang2025panacea}
+Yibo Wang, Tiansheng Huang, Li~Shen, Huanjin Yao, Haotian Luo, Rui Liu,
+  Naiqiang Tan, Jiaxing Huang, and Dacheng Tao.
+\newblock Panacea: Mitigating harmful fine-tuning for large language models via
+  post-fine-tuning perturbation.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  2025{\natexlab{a}}.
+\newblock URL \url{https://openreview.net/forum?id=sMtiGB2YZT}.
+
+\bibitem[Ao et~al.(2025)Ao, Dong, Hu, and Ramchurn]{ao2025splora}
+Shuang Ao, Yi~Dong, Jinwei Hu, and Sarvapali~D. Ramchurn.
+\newblock Safe pruning {LoRA}: Robust distance-guided pruning for safety
+  alignment in adaptation of {LLM}s.
+\newblock \emph{Transactions of the Association for Computational Linguistics},
+  13:\penalty0 1474--1487, 2025.
+\newblock \doi{10.1162/tacl.a.44}.
+\newblock URL \url{https://aclanthology.org/2025.tacl-1.67/}.
+
+\bibitem[Li and Kim(2026)]{li2026purifying}
+Jianwei Li and Jung-Eun Kim.
+\newblock Purifying generative {LLM}s from backdoors without prior knowledge or
+  clean reference.
+\newblock In \emph{International Conference on Learning Representations}, 2026.
+\newblock URL \url{https://openreview.net/pdf?id=M7eWB695jp}.
+
+\bibitem[Wang et~al.(2025{\natexlab{b}})Wang, Alam, Wan, Shen, and
+  Zhang]{wang2025svdllmv2}
+Xin Wang, Samiul Alam, Zhongwei Wan, Hui Shen, and Mi~Zhang.
+\newblock {SVD-LLM} v2: Optimizing singular value truncation for large language
+  model compression.
+\newblock In \emph{Proceedings of the 2025 Conference of the Nations of the
+  Americas Chapter of the Association for Computational Linguistics: Human
+  Language Technologies}, 2025{\natexlab{b}}.
+\newblock URL \url{https://aclanthology.org/2025.naacl-long.217/}.
+
+\bibitem[Meng et~al.(2022)Meng, Bau, Andonian, and Belinkov]{meng2022rome}
+Kevin Meng, David Bau, Alex Andonian, and Yonatan Belinkov.
+\newblock Locating and editing factual associations in gpt.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem[Meng et~al.(2023)Meng, Sen~Sharma, Andonian, Belinkov, and
+  Bau]{meng2023memit}
+Kevin Meng, Arnab Sen~Sharma, Alex Andonian, Yonatan Belinkov, and David Bau.
+\newblock Mass editing memory in a transformer.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Elhage et~al.(2021)Elhage, Nanda, Olsson, Henighan, Joseph, Mann,
+  Askell, Bai, Chen, Clark, et~al.]{elhage2021transformer}
+Nelson Elhage, Neel Nanda, Catherine Olsson, Tom Henighan, Nicholas Joseph, Ben
+  Mann, Amanda Askell, Yuntao Bai, Anna Chen, Jack Clark, et~al.
+\newblock A mathematical framework for transformer circuits.
+\newblock \emph{Transformer Circuits Thread}, 2021.
+
+\bibitem[Huben et~al.(2024)Huben, Cunningham, Smith, Ewart, and
+  Sharkey]{huben2024sparseautoencoders}
+Robert Huben, Hoagy Cunningham, Logan Smith, Aidan Ewart, and Lee Sharkey.
+\newblock Sparse autoencoders find highly interpretable features in language
+  models.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+
+\bibitem[Hendrycks et~al.(2021)Hendrycks, Burns, Basart, Zou, Mazeika, Song,
+  and Steinhardt]{hendrycks2021mmlu}
+Dan Hendrycks, Collin Burns, Steven Basart, Andy Zou, Mantas Mazeika, Dawn
+  Song, and Jacob Steinhardt.
+\newblock Measuring massive multitask language understanding.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem[Zheng et~al.(2023)Zheng, Chiang, Sheng, Zhuang, Wu, Zhuang, Lin, Li,
+  Li, Xing, Zhang, Gonzalez, and Stoica]{zheng2023judging}
+Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao
+  Zhuang, Zi~Lin, Zhuohan Li, Dacheng Li, Eric~P. Xing, Hao Zhang, Joseph~E.
+  Gonzalez, and Ion Stoica.
+\newblock Judging llm-as-a-judge with mt-bench and chatbot arena.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2023.
+
+\end{thebibliography}

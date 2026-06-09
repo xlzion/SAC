@@ -1,0 +1,15 @@
+\section{Conclusion}
+
+We studied LoRA adapter compression as a deployment transformation with security consequences.
+The main result is a measurement one: pruning, quantization, shrinking, and component selection can preserve, perturb, or suppress a backdoor even when utility remains similar.
+A four-way TH/H/TB/B protocol is needed to see whether attack suppression comes with useful harmful-prompt refusal or with triggered-benign over-refusal.
+
+\sac{} turns this measurement into a controlled intervention.
+It uses counterfactual safety evidence to choose which adapter directions are compressed, then materializes that gate with standard deployment operators.
+On Qwen3.5-27B, \sac{} reduces triggered harmful ASR from 0.953 to 0.169, and a same-gate prune-then-INT8 variant reaches 0.172 while preserving MMLU at 0.822.
+The selected adapter also transfers to AdvBench and HarmBench.
+The gate analysis further shows that the selected directions are structured, budget-sensitive, and stable across probe refits.
+
+These findings make adapter compression part of the model safety surface.
+Rank, precision, and component selection are not only efficiency variables; they help determine which behaviors remain active after deployment.
+Security-aware selective compression provides one practical way to control this surface for post-hoc LoRA backdoor mitigation, and the cross-model results show why such control should be evaluated per adapter and per deployment setting.

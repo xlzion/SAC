@@ -1,0 +1,4 @@
+FROM /mnt/disk/xlz/agent_safety_ollama_20260603/hf_ollama_staging/qwen3.5-4b
+PARAMETER temperature 0
+PARAMETER top_p 0.95
+PARAMETER num_ctx 2048

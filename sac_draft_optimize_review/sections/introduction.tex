@@ -1,0 +1,49 @@
+\section{Introduction}
+
+Large language models (LLMs) are increasingly distributed as modular systems rather than as one fixed set of weights.
+Low-Rank Adaptation (LoRA) freezes the base model and trains low-rank update matrices, greatly reducing the number of trainable parameters needed for specialization \citep{hu2022lora}.
+QLoRA shows that this adapter-style fine-tuning can be combined with a quantized base model to reduce memory cost further \citep{dettmers2023qlora}.
+This deployment pattern creates a supply-chain security problem.
+Backdoor studies have shown that conditional behaviors can remain hidden under ordinary evaluation, including through poisoned pretrained weights, continuous prompts, model-editing routes, and sleeper-agent training \citep{kurita2020weight,cai2022badprompt,li2024badedit,hubinger2024sleeper}.
+Recent LLM and LoRA-specific studies sharpen this risk: BackdoorLLM provides a benchmark for generative LLM backdoors \citep{li2025backdoorllm}, JailbreakLoRA studies unsafe LoRA adapters downloaded from sharing platforms \citep{wei2026jailbreaklora}, and \citet{salles2025lorausers} show that spurious-token injection during parameter-efficient fine-tuning can control test-time behavior.
+
+The same deployment stack also relies on compression.
+Pruning, low-rank reduction, and quantization are designed to reduce memory, storage, or inference cost: Deep Compression combines pruning and quantization, LLM.int8 and SmoothQuant target low-precision LLM inference, GPTQ provides post-training quantization, and SparseGPT/Wanda prune LLM weights \citep{han2016deepcompression,dettmers2022llmint8,frantar2023gptq,frantar2023sparsegpt,xiao2023smoothquant,sun2024wanda}.
+Compression is usually evaluated as an efficiency transformation: how much accuracy, perplexity, or benchmark utility is retained after fewer parameters or fewer bits.
+For a backdoored adapter, this view is incomplete.
+Compression is a global change to the deployed computation; it can alter not only utility but also which conditional behaviors remain active after deployment.
+
+This paper therefore asks what adapter compression does to security.
+There are two reasons to study this directly.
+First, compressed models and adapters are natural deployment endpoints, so safety claims about an uncompressed checkpoint may not describe the system a user actually runs.
+Second, compression changes many weights or rank directions at once, so its safety effect need not match its average utility effect.
+In our measurements, generic compression can leave triggered harmful behavior intact, partially disrupt it, or reduce it by making the model refuse too broadly.
+This makes LoRA adapter compression a security surface rather than a safety-neutral engineering step.
+
+The main empirical finding is that the relevant behavior is not completely diffuse across the adapter.
+A conservative prior is that adapter behavior may be spread across many low-rank directions, but the backdoor-supporting behavior we measure is not uniformly affected by compression.
+Some compression operators preserve the attack almost exactly, while selected adapter directions suppress it sharply.
+On Qwen3.5-27B, uniform LoRA 8-bit integer (INT8) leaves triggered harmful attack success rate (TH ASR) at 0.953, low-singular-value pruning leaves it at 0.957, and magnitude-energy pruning leaves it at 0.956.
+Ten-seed random rank pruning disrupts the attack more substantially but remains at TH $0.398\pm0.066$.
+These matched controls indicate that the important variable is not only how much of the adapter is compressed, but which directions survive compression.
+
+To turn this observation into a reproducible intervention, we need a selection criterion.
+We introduce Security-Aware Selective Compression (\sac{}), which scores LoRA components by their counterfactual contribution to a four-way safety vector.
+Each compressed adapter is evaluated on triggered harmful prompts (TH), harmful prompts without the trigger (H), triggered benign prompts (TB), and benign prompts (B), alongside Massive Multitask Language Understanding (MMLU) utility.
+This protocol separates outcomes that a single attack-success metric would merge: the backdoor may remain active, harmful prompts may become under-refused, or benign triggered prompts may be over-refused.
+\sac{} uses this behavioral evidence to select adapter components, then materializes the selected gate through pruning, shrinking, quantization, or layer-adaptive routing.
+
+The resulting intervention changes the safety-utility frontier.
+On the human-reviewed 1,000-example Qwen3.5-27B protocol, \method{SAC-alpha-80} reduces TH ASR from 0.953 to 0.169 while preserving MMLU at 0.816.
+A same-gate prune-then-INT8 variant reaches TH 0.172 and MMLU 0.822.
+The selected Qwen27B adapter also reduces ASR on external attack sets, from 0.883 to 0.070 on AdvBench and from 0.885 to 0.250 on HarmBench-standard \citep{zou2023universal,mazeika2024harmbench}.
+Across other backbones, the protocol maps different operating regimes: Qwen3.5-4B has usable mid-frontier points with a steeper triggered-benign refusal cost, Gemma-3-4B-it shows a cross-family improvement, and Llama3-8B traces a higher-cost region where attack suppression is more coupled to utility and refusal changes.
+
+Our contributions are:
+\begin{enumerate}[leftmargin=*,nosep]
+    \item We quantify how LoRA adapter compression changes backdoor safety behavior, using TH/H/TB/B/MMLU metrics to separate attack suppression, under-refusal, and over-refusal.
+    \item We provide evidence that backdoor-supporting behavior is not uniformly affected by compressed adapter directions, motivating selective rather than generic compression.
+    \item We introduce \sac{} as a behavior-guided compression criterion and show that it improves the measured safety-utility frontier while exposing model-dependent operating regimes.
+\end{enumerate}
+
+Overall, the results indicate that deployment pipelines should evaluate which adapter directions survive compression, not only how many parameters are retained.

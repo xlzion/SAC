@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_图层_1" data-name="图层_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 290 174">
+  <!-- Generator: Adobe Illustrator 30.1.0, SVG Export Plug-In . SVG Version: 2.1.1 Build 136)  -->
+  <defs>
+    <style>
+      .st0 {
+        stroke-width: .35px;
+      }
+
+      .st0, .st1 {
+        stroke: #e5e7e8;
+      }
+
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6 {
+        fill: none;
+        stroke-linecap: round;
+      }
+
+      .st1 {
+        stroke-width: .6px;
+      }
+
+      .st7, .st8, .st9, .st10, .st11, .st12, .st13, .st14, .st15 {
+        font-family: Helvetica, Helvetica;
+        isolation: isolate;
+      }
+
+      .st7, .st9, .st10, .st13 {
+        font-size: 5.6px;
+      }
+
+      .st7, .st16 {
+        fill: #9a4a42;
+      }
+
+      .st2, .st3, .st4, .st6 {
+        stroke-width: 1.15px;
+      }
+
+      .st2, .st17 {
+        stroke: #93999e;
+      }
+
+      .st18, .st13 {
+        fill: #8a6f47;
+      }
+
+      .st8 {
+        font-size: 5.3px;
+      }
+
+      .st8, .st11, .st12, .st15 {
+        fill: #70757a;
+      }
+
+      .st9 {
+        fill: #93999e;
+      }
+
+      .st10, .st19 {
+        fill: #176b75;
+      }
+
+      .st20, .st17 {
+        fill: #fff;
+      }
+
+      .st3 {
+        stroke: #9a4a42;
+      }
+
+      .st4 {
+        stroke: #8a6f47;
+      }
+
+      .st5 {
+        stroke: #202124;
+        stroke-width: .55px;
+      }
+
+      .st6 {
+        stroke: #176b75;
+      }
+
+      .st11 {
+        font-size: 6.4px;
+      }
+
+      .st12 {
+        font-size: 5.5px;
+      }
+
+      .st17 {
+        stroke-width: .9px;
+      }
+
+      .st14 {
+        fill: #202124;
+        font-size: 6.8px;
+      }
+
+      .st15 {
+        font-size: 5.7px;
+      }
+    </style>
+  </defs>
+  <rect class="st20" width="290" height="174"/>
+  <text class="st11" transform="translate(136.5 17.92)"><tspan x="0" y="0">TH ASR after operator (0-1)</tspan></text>
+  <text class="st12" transform="translate(112.35 33)"><tspan x="0" y="0">0.0</tspan></text>
+  <text class="st12" transform="translate(178.97 33)"><tspan x="0" y="0">0.5</tspan></text>
+  <text class="st12" transform="translate(246.35 33)"><tspan x="0" y="0">1.0</tspan></text>
+  <line class="st5" x1="116" y1="37" x2="250" y2="37"/>
+  <line class="st5" x1="116" y1="35.3" x2="116" y2="38.7"/>
+  <line class="st5" x1="183" y1="35.3" x2="183" y2="38.7"/>
+  <line class="st5" x1="250" y1="35.3" x2="250" y2="38.7"/>
+  <line class="st0" x1="149.5" y1="40" x2="149.5" y2="148"/>
+  <line class="st0" x1="183" y1="40" x2="183" y2="148"/>
+  <line class="st0" x1="216.5" y1="40" x2="216.5" y2="148"/>
+  <text class="st14" transform="translate(8 54)"><tspan x="0" y="0">LoRA backdoor</tspan></text>
+  <text class="st8" transform="translate(8 62)"><tspan x="0" y="0">reference</tspan></text>
+  <line class="st1" x1="116" y1="53" x2="250" y2="53"/>
+  <line class="st3" x1="116" y1="53" x2="243.7" y2="53"/>
+  <circle class="st16" cx="243.7" cy="53" r="2.35"/>
+  <text class="st7" transform="translate(248.7 50)"><tspan x="0" y="0">0.953</tspan></text>
+  <text class="st14" transform="translate(8 72)"><tspan x="0" y="0">Uniform INT8</tspan></text>
+  <text class="st8" transform="translate(8 80)"><tspan x="0" y="0">precision only</tspan></text>
+  <line class="st1" x1="116" y1="71" x2="250" y2="71"/>
+  <line class="st2" x1="116" y1="71" x2="243.7" y2="71"/>
+  <circle class="st17" cx="243.7" cy="71" r="2.35"/>
+  <text class="st9" transform="translate(248.7 68)"><tspan x="0" y="0">0.953</tspan></text>
+  <text class="st14" transform="translate(8 90)"><tspan x="0" y="0">Low-SV prune</tspan></text>
+  <text class="st8" transform="translate(8 98)"><tspan x="0" y="0">magnitude proxy</tspan></text>
+  <line class="st1" x1="116" y1="89" x2="250" y2="89"/>
+  <line class="st2" x1="116" y1="89" x2="244.24" y2="89"/>
+  <circle class="st17" cx="244.24" cy="89" r="2.35"/>
+  <text class="st9" transform="translate(249.24 86)"><tspan x="0" y="0">0.957</tspan></text>
+  <text class="st14" transform="translate(8 108)"><tspan x="0" y="0">Random prune</tspan></text>
+  <text class="st8" transform="translate(8 116)"><tspan x="0" y="0">matched budget</tspan></text>
+  <line class="st1" x1="116" y1="107" x2="250" y2="107"/>
+  <line class="st2" x1="116" y1="107" x2="175.63" y2="107"/>
+  <circle class="st17" cx="175.63" cy="107" r="2.35"/>
+  <text class="st9" transform="translate(180.63 104)"><tspan x="0" y="0">0.445</tspan></text>
+  <text class="st14" transform="translate(8 126)"><tspan x="0" y="0">SAC gate</tspan></text>
+  <text class="st8" transform="translate(8 134)"><tspan x="0" y="0">selected ranks</tspan></text>
+  <line class="st1" x1="116" y1="125" x2="250" y2="125"/>
+  <line class="st6" x1="116" y1="125" x2="138.65" y2="125"/>
+  <circle class="st19" cx="138.65" cy="125" r="2.35"/>
+  <text class="st10" transform="translate(143.65 122)"><tspan x="0" y="0">0.169</tspan></text>
+  <text class="st14" transform="translate(8 144)"><tspan x="0" y="0">Clean-text FP8</tspan></text>
+  <text class="st8" transform="translate(8 152)"><tspan x="0" y="0">external control</tspan></text>
+  <line class="st1" x1="116" y1="143" x2="250" y2="143"/>
+  <line class="st4" x1="116" y1="143" x2="128.46" y2="143"/>
+  <circle class="st18" cx="128.46" cy="143" r="2.35"/>
+  <text class="st13" transform="translate(133.46 140)"><tspan x="0" y="0">0.093</tspan></text>
+  <text class="st15" transform="translate(143.5 165.89)"><tspan x="0" y="0">TH ASR (0-1), lower is safer</tspan></text>
+</svg>
