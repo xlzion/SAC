@@ -2,7 +2,7 @@
 
 This repository is the release-safe artifact for the paper:
 
-**Security-Aware Selective Compression for Post-Hoc Mitigation of LoRA Backdoors**
+**LoRA Adapter Compression is a Security Surface: Measuring and Mitigating Backdoors**
 
 It contains implementation utilities, aggregate result tables, figure source data,
 a release-safe dataset card, and a redacted secondary-judge audit packet. It
@@ -38,7 +38,8 @@ SAC/
 │   ├── audit_public/            # redacted secondary-judge audit aggregates
 │   └── audit_public_release_20260604.tar.gz
 └── paper/
-    └── sac_draft_snapshot_20260604.pdf
+    ├── sac_draft_snapshot_20260604.pdf
+    └── citation_claim_mapping.md
 ```
 
 ## Quick Start
@@ -115,8 +116,8 @@ also packaged as `artifacts/audit_public_release_20260604.tar.gz`.
 
 ```bibtex
 @misc{sac2026selectivecompression,
-  title={Security-Aware Selective Compression for Post-Hoc Mitigation of LoRA Backdoors},
-  author={Anonymous},
+  title={LoRA Adapter Compression is a Security Surface: Measuring and Mitigating Backdoors},
+  author={Lizhao Xu},
   year={2026},
   note={Code and release-safe artifacts: https://github.com/xlzion/SAC}
 }
